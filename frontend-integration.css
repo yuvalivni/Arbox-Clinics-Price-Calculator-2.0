@@ -1,0 +1,22 @@
+/* Integration controls are only in the calculator preview UI, never on the PDF. */
+#arboxIntegration{direction:rtl;max-width:1080px;margin:0 auto 18px;background:#fff;border:1px solid #cbd9ec;border-radius:14px;padding:18px 20px;box-shadow:0 6px 24px #0f28411c;color:#1c2e49;font-family:Arial,sans-serif;line-height:1.6;}
+#arboxIntegration .arbox-int-heading{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:8px;}
+#arboxIntegration .arbox-int-heading strong{font-size:18px;color:#102c5d;}
+#arboxIntegration .arbox-int-note{font-size:12px;color:#566981;margin:0 0 14px;}
+#arboxIntegration .arbox-int-grid{display:grid;grid-template-columns:1.5fr 1fr auto;gap:10px;align-items:end;}
+#arboxIntegration label{font-size:12px;font-weight:700;display:flex;flex-direction:column;gap:5px;}
+#arboxIntegration input:not([type=checkbox]){font:inherit;width:100%;min-width:160px;border:1px solid #b8c9de;border-radius:9px;padding:10px 12px;direction:ltr;text-align:left;}
+#arboxIntegration .arbox-int-buttons{display:flex;gap:9px;flex-wrap:wrap;align-items:center;margin-top:12px;}
+#arboxIntegration button{font:inherit;font-weight:700;border:1px solid #c4d3e7;background:#fff;color:#174585;padding:10px 13px;border-radius:9px;cursor:pointer;}
+#arboxIntegration button.arbox-primary{background:#2254c6;color:white;border-color:#2254c6;}
+#arboxIntegration button:disabled{cursor:not-allowed;background:#eef0f4;color:#8892a2;border-color:#e1e5eb;}
+#arboxIntegration .arbox-int-approved{display:flex;align-items:center;gap:8px;font-size:13px;margin-top:12px;font-weight:700;cursor:pointer;}
+#arboxIntegration .arbox-int-message{margin-top:10px;padding:10px 12px;background:#f4f8ff;border:1px solid #e0e8f4;border-radius:9px;font-size:13px;white-space:pre-wrap;}
+#arboxIntegration .arbox-int-message.error{background:#fff2f0;border-color:#e6bab3;color:#9b2217;}
+#arboxIntegration .arbox-int-message.success{background:#effcf6;border-color:#b5e8cc;color:#17663e;}
+#arboxIntegration .arbox-int-contact{margin-top:8px;font-size:13px;}
+#arboxIntegration .arbox-int-contact a{color:#1558b3;text-decoration:underline;}
+#arboxIntegration .arbox-auth{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px;}
+#arboxIntegration .arbox-auth span{font-size:12px;color:#5b6e86;}
+@media(max-width:700px){#arboxIntegration .arbox-int-grid{grid-template-columns:1fr;}#arboxIntegration{padding:12px;}}
+@media print{#arboxIntegration{display:none!important;}}
