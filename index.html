@@ -509,7 +509,7 @@ $('printProposal').addEventListener('click',()=>window.arboxSaveCurrentProposalP
 
 </script>
 <style>
-/* Client-side PDF and WhatsApp tools; never included in printed proposal. */
+/* v2.2: direct WhatsApp Web + manual attachment (no unsupported native web sharing). */
 #arboxShare{direction:rtl;max-width:1080px;margin:0 auto 16px;padding:18px 20px;background:#fff;border:1px solid #c7d7ec;border-radius:14px;box-shadow:0 7px 22px rgba(16,44,93,.09);color:#1d3458;font-family:Arial,sans-serif;line-height:1.65}
 #arboxShare .share-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:9px}
 #arboxShare .share-head strong{font-size:18px;color:#102e60}
@@ -526,6 +526,11 @@ $('printProposal').addEventListener('click',()=>window.arboxSaveCurrentProposalP
 #arboxShare button.share-primary{background:#2254c6;color:#fff;border-color:#2254c6}
 #arboxShare button.share-wa{background:#effaf5;color:#14553b;border-color:#a8d9bb}
 #arboxShare button:disabled{cursor:not-allowed;background:#f0f1f4;border-color:#e5e7ed;color:#939da9}
+#arboxShare a.share-wa{display:inline-flex;align-items:center;justify-content:center;font:inherit;font-weight:700;padding:10px 13px;background:#effaf5;color:#14553b;border:1px solid #a8d9bb;border-radius:9px;text-decoration:none;cursor:pointer;box-sizing:border-box}
+#arboxShare a.share-wa[aria-disabled="true"]{background:#f0f1f4;border-color:#e5e7ed;color:#939da9;cursor:not-allowed}
+#arboxShare .share-steps{background:#f4f8ff;border:1px solid #dce8f7;border-radius:9px;padding:11px 13px;font-size:13px;margin:10px 0}
+#arboxShare .share-steps p{margin:3px 0}
+#arboxShare .share-wa-help{font-size:12px;color:#4d5d76;line-height:1.6;margin:8px 0}
 #arboxShare .share-status{font-size:13px;color:#41556e;margin-top:12px;white-space:pre-wrap;background:#f6f8fc;padding:10px 12px;border-radius:8px}
 #arboxShare .share-status.error{background:#fff2ef;color:#a21e13}
 #arboxShare .share-status.success{background:#ebfaf2;color:#125b3a}
@@ -563,10 +568,15 @@ $('printProposal').addEventListener('click',()=>window.arboxSaveCurrentProposalP
     const el = byId('arboxShareFilename');
     if (el) el.textContent = `${getFileBase()}.pdf`;
     const accepted = !!byId('arboxShareApproved')?.checked;
-    for (const id of ['arboxShareWhatsApp', 'arboxShareNative']) {
-      const button = byId(id);
-      if (button) button.disabled = !accepted;
+    const wa = byId('arboxShareWhatsApp');
+    if (wa) {
+      wa.setAttribute('aria-disabled', String(!accepted));
+      // A real link avoids popup blocking and the intermediate wa.me chooser.
+      try { wa.href = accepted ? whatsappUrl() : '#'; }
+      catch (_) { wa.href = '#'; }
     }
+    const copy = byId('arboxShareCopy');
+    if (copy) copy.disabled = !accepted;
   };
   const restoreDocumentTitle = () => {
     if (restoreTitle !== null) {
@@ -619,42 +629,42 @@ $('printProposal').addEventListener('click',()=>window.arboxSaveCurrentProposalP
       seller ? `${seller} | Arbox Clinics` : 'צוות Arbox Clinics'
     ].join('\n');
   }
-  function openWhatsApp() {
-    let phone;
-    try { phone = normalizedPhone(); }
-    catch (e) { info(e.message, 'error'); return; }
-    const url = `https://wa.me/${phone}?text=${encodeURIComponent(messageText())}`;
-    const popup = window.open('about:blank', '_blank');
-    if (!popup) {
-      // Browser popup blocking fallback needs an explicit link the user can click.
-      info('הדפדפן חסם את פתיחת WhatsApp. השתמש בכפתור הקישור שמתחת להודעה.', 'error');
-      const anchor = byId('arboxShareFallback');
-      anchor.hidden = false;
-      anchor.href = url;
-    } else {
-      try { popup.opener = null; popup.location.replace(url); }
-      catch (_e) { popup.location.href = url; }
-      info('WhatsApp נפתח עם הודעה מוכנה. חשוב: יש לצרף את קובץ ה-PDF ששמרת בצ׳אט לפני לחיצה על שליחה. אין העלאה או שליחה אוטומטית.', 'success');
+  // On a desktop, navigate straight to WhatsApp Web; on a phone, prefer wa.me.
+  // This can only open a draft message. Attaching PDF and sending remain manual.
+  function whatsappUrl() {
+    const phone = normalizedPhone();
+    const text = encodeURIComponent(messageText());
+    const mobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    return mobile
+      ? `https://wa.me/${phone}?text=${text}`
+      : `https://web.whatsapp.com/send?phone=${phone}&text=${text}`;
+  }
+  function onWhatsAppClick(event) {
+    if (!byId('arboxShareApproved')?.checked) {
+      event.preventDefault();
+      info('יש לאשר את בדיקת ההצעה לפני פתיחת WhatsApp.', 'error');
+      return;
+    }
+    try {
+      // The anchor itself opens a new tab on the user's click (no popup script).
+      event.currentTarget.href = whatsappUrl();
+      info('נפתחת שיחה עם הלקוח ב-WhatsApp. ההודעה עדיין לא נשלחה! יש לצרף בצ׳אט את קובץ ה-PDF ששמרת וללחוץ על שליחה ב-WhatsApp. אם אינך מחובר/ת ל-WhatsApp Web, יש להתחבר תחילה.', 'success');
+    } catch (e) {
+      event.preventDefault();
+      event.currentTarget.href = '#';
+      info(e.message || String(e), 'error');
     }
   }
-  const nativePicker = () => byId('arboxSharePdfFile')?.click();
-  async function onNativePicked(event) {
-    const file = event.target.files?.[0];
-    event.target.value = '';
-    if (!file) return;
-    if (!file.name.toLowerCase().endsWith('.pdf') && file.type !== 'application/pdf') {
-      info('יש לבחור קובץ PDF בלבד.', 'error'); return;
+  async function copyMessage() {
+    if (!byId('arboxShareApproved')?.checked) {
+      info('יש לאשר את בדיקת ההצעה לפני העתקת הודעה לשליחה.', 'error'); return;
     }
     const text = messageText();
-    if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
-      try {
-        await navigator.share({ title: lastSuggestedName || getFileBase(), text, files: [file] });
-        info('נפתחה אפשרות השיתוף של המכשיר. יש לבחור WhatsApp ולהשלים את השליחה שם; האתר אינו מאשר שההודעה נשלחה.', 'success');
-      } catch (e) {
-        if (e?.name !== 'AbortError') info('השיתוף בקובץ נכשל: ' + (e?.message || String(e)), 'error');
-      }
-    } else {
-      info('המכשיר אינו מאפשר שיתוף קובץ PDF ישירות מהדפדפן. לחץ/י ״פתח WhatsApp״ וצרף/י את הקובץ ידנית.', 'error');
+    try {
+      await navigator.clipboard.writeText(text);
+      info('נוסח ההודעה הועתק. ניתן להדביק אותו בצ׳אט WhatsApp ולצרף את ה-PDF ידנית.', 'success');
+    } catch (e) {
+      info('ההעתקה נחסמה בדפדפן. אפשר לפתוח WhatsApp ולכתוב את ההודעה ידנית.', 'error');
     }
   }
   function onPreviewRendered() {
@@ -662,9 +672,7 @@ $('printProposal').addEventListener('click',()=>window.arboxSaveCurrentProposalP
     if (phone && byId('arboxSharePhone')) byId('arboxSharePhone').value = phone;
     byId('arboxShareApproved').checked = false;
     hasPreparedPdf = false;
-    const fallback = byId('arboxShareFallback');
-    if (fallback) fallback.hidden = true;
-    info('הצעת המחיר מוכנה לבדיקה. ניתן לשמור PDF גם ללא אישור שליחה. לפתיחת WhatsApp יש לאשר תחילה את פרטי ההצעה.');
+    info('הצעת המחיר מוכנה לבדיקה. ראשית שמור/י PDF, אחר כך אשר/י את ההצעה ופתח/י צ׳אט עם הלקוח ב-WhatsApp. צירוף הקובץ והשליחה מתבצעים בתוך WhatsApp.');
     refresh();
   }
   function mount() {
@@ -672,29 +680,25 @@ $('printProposal').addEventListener('click',()=>window.arboxSaveCurrentProposalP
     container.id = 'arboxShare';
     container.innerHTML = `
       <div class="share-head"><strong>שמירת הצעה ושיתוף עם הלקוח</strong><span class="share-caption">פועל ללא HubSpot וללא שרת</span></div>
-      <p class="share-note">שמור PDF בשם שמתקבל אוטומטית משם הלקוח, או פתח WhatsApp עם הודעה מוכנה. אין שליחה אוטומטית של קובץ ב-WhatsApp Web.</p>
+      <p class="share-note">שמירה מקומית של ההצעה ושליחה ידנית ב-WhatsApp — ללא HubSpot וללא שרת. במחשב הכפתור פותח את <strong>WhatsApp Web ישירות</strong>, בלי מסך בחירת אפליקציה.</p>
+      <div class="share-steps"><p><strong>1.</strong> לחץ/י ״שמור PDF״ ושמור/י את ההצעה.</p><p><strong>2.</strong> סמן/י שאישרת את ההצעה.</p><p><strong>3.</strong> פתח/י את השיחה ב-WhatsApp Web, צרף/י את ה-PDF ולחץ/י על שליחה.</p></div>
       <div class="share-filename"><strong>שם קובץ מוצע:</strong> <span id="arboxShareFilename"></span></div>
       <div class="share-fields"><label>טלפון WhatsApp של הלקוח<input id="arboxSharePhone" type="tel" autocomplete="off" placeholder="0501234567 או +972..."></label><label>מייל הלקוח (לידיעה בלבד)<input id="arboxShareEmail" type="email" placeholder="name@example.com" readonly></label></div>
       <label class="share-approve"><input type="checkbox" id="arboxShareApproved"> בדקתי את שם הלקוח, פירוט החבילה, המחירים והנמען ואני מאשר/ת לשתף את ההצעה.</label>
       <div class="share-actions">
-        <button type="button" id="arboxShareSave" class="share-primary">שמור PDF</button>
-        <button type="button" id="arboxShareWhatsApp" class="share-wa">פתח WhatsApp (צרף PDF)</button>
-        <button type="button" id="arboxShareNative">שתף PDF מהמכשיר</button>
-        <input type="file" id="arboxSharePdfFile" accept="application/pdf,.pdf" hidden>
+        <button type="button" id="arboxShareSave" class="share-primary">1. שמור PDF</button>
+        <a id="arboxShareWhatsApp" class="share-wa" href="#" target="_blank" rel="noopener noreferrer" aria-disabled="true">2. פתח צ׳אט ב-WhatsApp Web</a>
+        <button type="button" id="arboxShareCopy">העתק נוסח הודעה</button>
       </div>
-      <a id="arboxShareFallback" href="#" target="_blank" rel="noopener noreferrer" hidden>פתח WhatsApp בקישור ידני</a>
+      <p class="share-wa-help">חשוב: הכפתור <strong>לא שולח הודעה ולא מצרף PDF אוטומטית</strong>. במחשב יש לפתוח את הצ׳אט, ללחוץ על סימן הצירוף, לבחור את ה-PDF ששמרת ואז ללחוץ על שליחה. כפתור ״העתק נוסח הודעה״ הוא חלופה אם WhatsApp לא ממלא את ההודעה.</p>
       <div id="arboxShareStatus" class="share-status" role="status" aria-live="polite"></div>
-      <p class="share-privacy">שמירת ה-PDF מתבצעת במחשב שלך. כתובת WhatsApp תיפתח בדפדפן שלך בלבד. אין חיבור ל-CRM או אחסון הצעות בשרת. אל תשלח הצעה לפני בדיקת נתוני הלקוח והסכומים.</p>`;
+      <p class="share-privacy">שמירת ה-PDF מתבצעת במחשב שלך. כתובת WhatsApp תיפתח בדפדפן שלך בלבד. אין חיבור ל-CRM או אחסון הצעות בשרת. הכפתור פותח צ׳אט בלבד, אינו שולח הודעה. אל תשלח הצעה לפני בדיקת נתוני הלקוח והסכומים.</p>`;
     sheet.before(container);
     byId('arboxShareSave').addEventListener('click', savePdf);
-    byId('arboxShareWhatsApp').addEventListener('click', openWhatsApp);
-    byId('arboxShareNative').addEventListener('click', nativePicker);
-    byId('arboxSharePdfFile').addEventListener('change', onNativePicked);
+    byId('arboxShareWhatsApp').addEventListener('click', onWhatsAppClick);
+    byId('arboxShareCopy').addEventListener('click', copyMessage);
     byId('arboxShareApproved').addEventListener('change', refresh);
-    byId('arboxSharePhone').addEventListener('input', () => {
-      const fallback = byId('arboxShareFallback');
-      if (fallback) fallback.hidden = true;
-    });
+    byId('arboxSharePhone').addEventListener('input', refresh);
     const observer = new MutationObserver(onPreviewRendered);
     observer.observe(sheet, { childList: true });
     const makeButton = byId('makeProposal');
