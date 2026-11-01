@@ -423,7 +423,7 @@ function featureRow(label, description, note=''){
 // Core features are included in every basic subscription; paid/optional modules are
 // included only when actually selected, never by enumerating FEATURE_COPY.
 function quoteFeatureItems(users, branchCount, chosen){
- const list=CORE_FEATURES.map(c=>({...c,base:true}));
+ const list=CORE_FEATURES.filter(c=>users>1||c.title!=='ניהול צוות והרשאות').map(c=>({...c,base:true}));
  const forms=list.find(x=>x.title==='טפסים ושאלונים דיגיטליים');
  const formCount=Math.max(2,Number(val('formsDigital'))||2);
  forms.desc+=` במסגרת חבילת הבסיס כלולים 2 סוגי טפסים; בהצעה זו הוגדרו ${number(formCount)} סוגים.`;
@@ -471,7 +471,7 @@ function refreshFeatureSelectionHint(){
  if(!hint)return;
  const chosen=chosenModules().filter(m=>!['formsDigital','series'].includes(m.id));
  const counts=chosen.length;
- hint.textContent=`ההצעה תכלול את 7 יכולות חבילת הבסיס ואת ${number(counts)} המודולים האופציונליים שסומנו כעת במחשבון${Math.max(0,Number(val('users'))-1)>0?' (בתוספת המשתמשים שנבחרו)':''}${val('hasBranches')==='yes'?' (כולל סניפים נוספים)':''}. מודול שאינו מסומן לא יופיע בטבלה.`;
+ hint.textContent=`ההצעה תכלול את ${Number(val('users'))===1?6:7} יכולות חבילת הבסיס ואת ${number(counts)} המודולים האופציונליים שסומנו כעת במחשבון${Math.max(0,Number(val('users'))-1)>0?' (בתוספת המשתמשים שנבחרו)':''}${val('hasBranches')==='yes'?' (כולל סניפים נוספים)':''}. מודול שאינו מסומן לא יופיע בטבלה.`;
 }
 function pricingAnnex(modsChosen, users, branches, migrationInfo){
  if(!$('quoteShowBreakdown')?.checked)return '';
@@ -645,7 +645,7 @@ function createProposal(){
  <p>כיום אנו מעניקים שירות ביותר מ־25 מדינות ללמעלה מ־6,000 ארגונים ועסקים, באמצעות צוות של כ־60 עובדים המחויבים לשיפור מתמיד של המוצר, השירות וחוויית המשתמש.</p>
  <p><span dir="ltr">Arbox Clinics</span> משלבת את הניסיון והתשתית הטכנולוגית של <span dir="ltr">Arbox</span> עם יכולות המותאמות לניהול קליניקות, מרפאות ומרכזים רפואיים – במערכת אחת, גמישה ומאובטחת.</p>
  <h3>מה <span dir="ltr">Arbox</span> מאפשרת?</h3>
- <ul class="p-template-bullets"><li>תיק מטופל ותיעוד רפואי – ריכוז המידע והיסטוריית הטיפול בכרטיס המטופל.</li><li>ניהול תורים ויומנים – תורים, תזכורות ואישורי הגעה.</li><li>ניהול צוות והרשאות – ניהול צוותים ומעקב אחר הפעילות.</li><li>ניהול טיפולים ותשלומים – מחירונים, סדרות טיפולים, יתרות ותשלומים.</li><li>ניהול ובקרה – דוחות ונתונים המספקים תמונת מצב על הפעילות.</li><li>יכולות נוספות בהתאם למודולים שנבחרו בהצעה.</li></ul>
+ <ul class="p-template-bullets"><li>תיק מטופל ותיעוד רפואי – ריכוז המידע והיסטוריית הטיפול בכרטיס המטופל.</li><li>ניהול תורים ויומנים – תורים, תזכורות ואישורי הגעה.</li>${users>1?'<li>ניהול צוות והרשאות – ניהול צוותים ומעקב אחר הפעילות.</li>':''}<li>ניהול טיפולים ותשלומים – מחירונים, סדרות טיפולים, יתרות ותשלומים.</li><li>ניהול ובקרה – דוחות ונתונים המספקים תמונת מצב על הפעילות.</li><li>יכולות נוספות בהתאם למודולים שנבחרו בהצעה.</li></ul>
  <p class="p-privacy">Arbox שמה את פרטיות ואבטחת המידע של לקוחותיה ומטופליהם בראש סדר העדיפויות, ופועלת בהתאם לתקני אבטחת המידע והפרטיות הרלוונטיים.</p>
  <h2>מערכת <span dir="ltr">Arbox Clinics</span> לניהול הקליניקה</h2>
  <p class="p-package-label"><strong>חבילת <span dir="ltr">Arbox Clinics</span> לניהול קליניקה</strong></p>
