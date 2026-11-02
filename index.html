@@ -1208,8 +1208,13 @@ $('printProposal').addEventListener('click',()=>{
 #arboxShare .share-note{color:#546783;font-size:13px;margin:8px 0 14px}
 #arboxShare .share-filename{font-size:13px;color:#41556e;background:#f4f8ff;border:1px solid #e0e9f8;border-radius:8px;padding:9px 11px;margin:10px 0;overflow-wrap:anywhere}
 #arboxShare .share-actions{display:flex;flex-wrap:wrap;gap:9px;align-items:center;margin-top:10px}
-#arboxShare button{font:inherit;font-weight:700;padding:10px 13px;background:#2254c6;color:#fff;border:1px solid #2254c6;border-radius:9px;cursor:pointer}
-#arboxShare button:hover{background:#183f97}
+#arboxShare button,#arboxShare .share-link{display:inline-flex;align-items:center;justify-content:center;gap:6px;font:inherit;font-weight:700;padding:10px 13px;background:#2254c6;color:#fff;border:1px solid #2254c6;border-radius:9px;cursor:pointer;text-decoration:none}
+#arboxShare button:hover,#arboxShare .share-link:hover{background:#183f97;color:#fff}
+#arboxShare .share-link{background:#fff;color:#183f82;border-color:#aebfdf}
+#arboxShare .share-link:hover{background:#edf4ff;color:#183f82}
+#arboxShare .share-email{font-weight:700;direction:ltr;unicode-bidi:embed;overflow-wrap:anywhere}
+#arboxShare .share-steps{margin:12px 0 3px;padding-right:20px;color:#506480;font-size:12.5px;line-height:1.8}
+#arboxShare .share-steps li{margin:2px 0}
 #arboxShare .share-status{font-size:13px;color:#41556e;margin-top:12px;white-space:pre-wrap;background:#f6f8fc;padding:10px 12px;border-radius:8px}
 #arboxShare .share-status.error{background:#fff2ef;color:#a21e13}
 #arboxShare .share-status.success{background:#ebfaf2;color:#125b3a}
@@ -1278,23 +1283,54 @@ $('printProposal').addEventListener('click',()=>{
   window.arboxSaveCurrentProposalPdf = savePdf;
   window.addEventListener('afterprint', restoreDocumentTitle);
   window.addEventListener('beforeunload', restoreDocumentTitle);
+  const HUBSPOT_PORTAL = '24931843';
+  const quoteEmail = () => (byId('quoteEmail')?.value || '').trim();
+  const validEmail = email => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  const hubspotUrl = email => `https://app.hubspot.com/contacts/${HUBSPOT_PORTAL}/objects/0-1/views/all/list?query=${encodeURIComponent(email)}`;
+  const refreshHubSpot = () => {
+    const email = quoteEmail();
+    const field = byId('arboxShareEmail');
+    const button = byId('arboxShareHubspot');
+    if (field) field.textContent = email || 'לא הוזנה כתובת מייל';
+    if (button) button.href = validEmail(email) ? hubspotUrl(email) : '#';
+  };
   const onPreviewRendered = () => {
     refreshName();
-    info('ההצעה מוכנה. ניתן לערוך תוכן ומחירים בתוך ההצעה, ואז לשמור PDF ולצרף למייל באופן ידני.');
+    refreshHubSpot();
+    info('ההצעה מוכנה. אפשר לשמור PDF ולפתוח חיפוש של הלקוח ב-HubSpot לצירוף ידני של המסמך.');
   };
   const mount = () => {
     const container = document.createElement('section');
     container.id = 'arboxShare';
     container.innerHTML = `
-      <div class="share-head"><strong>שמירת הצעת המחיר</strong><span class="share-caption">ללא HubSpot וללא שרת</span></div>
-      <p class="share-note">לאחר בדיקת הפרטים והעלויות, לחץ/י על הכפתור ושמור/י את הצעת המחיר כ-PDF במחשב.</p>
+      <div class="share-head"><strong>הצעת המחיר והלקוח ב-HubSpot</strong><span class="share-caption">ללא חיבור API וללא שרת</span></div>
+      <p class="share-note">אחרי עריכה ואישור של ההצעה, אפשר לשמור את הקובץ ולפתוח חיפוש של הלקוח ב-HubSpot לפי כתובת המייל.</p>
       <div class="share-filename"><strong>שם קובץ מוצע:</strong> <span id="arboxShareFilename"></span></div>
-      <div class="share-actions"><button type="button" id="arboxShareSave">שמור PDF</button></div>
+      <div class="share-filename"><strong>כתובת המייל לחיפוש:</strong> <span class="share-email" id="arboxShareEmail"></span></div>
+      <div class="share-actions"><button type="button" id="arboxShareSave">שמור PDF</button><a id="arboxShareHubspot" class="share-link" href="#" target="_blank" rel="noopener noreferrer">פתח לקוח ב-HubSpot</a></div>
+      <ol class="share-steps"><li>שמור PDF לאחר השלמת העריכות בהצעה.</li><li>פתח חיפוש של הלקוח ב-HubSpot, ובחר את ה-Contact המתאים אם יש יותר מתוצאה אחת.</li><li>בכרטיס ה-Contact הוסף את ה-PDF לאזור הקבצים המצורפים (Attachments).</li></ol>
       <div id="arboxShareStatus" class="share-status" role="status" aria-live="polite"></div>
-      <p class="share-privacy">אין שליחה אוטומטית ללקוח או העלאה ל-HubSpot. אם רוצים לשלוח את ההצעה, יש לצרף את קובץ ה-PDF באופן ידני.</p>`;
+      <p class="share-privacy">אין העלאה אוטומטית ל-HubSpot או שליחת הצעה ללקוח. יש לצרף את הקובץ ידנית בכרטיס ה-Contact הנכון.</p>`;
     sheet.before(container);
     byId('arboxShareSave').addEventListener('click', () => byId('printProposal')?.click());
+    byId('arboxShareHubspot').addEventListener('click', (event) => {
+      const email = quoteEmail();
+      if (!validEmail(email)) {
+        event.preventDefault();
+        info('יש למלא כתובת מייל תקינה בשדה ״כתובת אימייל של הלקוח״ וליצור את ההצעה מחדש אם צריך.', 'error');
+        return;
+      }
+      // The link opens directly from a user click; clipboard access is a non-essential convenience.
+      if (navigator.clipboard?.writeText) {
+        navigator.clipboard.writeText(email)
+          .then(() => info('נפתח חיפוש ב-HubSpot והמייל הועתק. בחר/י את ה-Contact הנכון וצרף/י אליו את קובץ ה-PDF.', 'success'))
+          .catch(() => info('נפתח חיפוש לפי המייל. אם HubSpot לא סינן את הרשימה, העתק/י את כתובת המייל המוצגת כאן לחיפוש.', 'success'));
+      } else {
+        info('נפתח חיפוש לפי המייל. אם HubSpot לא סינן את הרשימה, העתק/י את כתובת המייל המוצגת כאן לחיפוש.', 'success');
+      }
+    });
     byId('client')?.addEventListener('input', refreshName);
+    byId('quoteEmail')?.addEventListener('input', refreshHubSpot);
     new MutationObserver(onPreviewRendered).observe(sheet, { childList: true });
     onPreviewRendered();
   };
