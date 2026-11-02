@@ -494,11 +494,11 @@
  </div>
  <div id="discountPreview" class="p-discount-preview" aria-live="polite">לא הוגדרו הנחות.</div>
 </div>
-<div class="panel"><h2 class="section-title">8. נוסח להצעת המחיר</h2><div id="quote" class="output"></div><button class="btn copy" onclick="navigator.clipboard.writeText(document.getElementById('quote').innerText)">העתקת הסיכום</button></div>
-<div class="panel"><h2 class="section-title">9. סיכום הזמנה להעתקה ל-HubSpot</h2><p class="hint">הסיכום מתעדכן אוטומטית לפי הבחירות במחשבון, ומוצג כאן תמיד. ניתן לסמן ולהעתיק גם ידנית.</p><div id="hubspotSummary" class="output" style="white-space:pre-wrap;user-select:text;min-height:170px">מכין סיכום הזמנה…</div><button class="btn copy" type="button" id="copyHubspot">העתקת סיכום הזמנה ל-HubSpot</button><span id="copyHubspotStatus" style="margin-inline-start:12px;font-size:13px" aria-live="polite"></span></div>
+<div id="quote" hidden aria-hidden="true"></div>
+<div class="panel"><h2 class="section-title">8. סיכום הזמנה להעתקה ל-HubSpot</h2><p class="hint">הסיכום מתעדכן אוטומטית לפי הבחירות במחשבון, ומוצג כאן תמיד. ניתן לסמן ולהעתיק גם ידנית.</p><div id="hubspotSummary" class="output" style="white-space:pre-wrap;user-select:text;min-height:170px">מכין סיכום הזמנה…</div><button class="btn copy" type="button" id="copyHubspot">העתקת סיכום הזמנה ל-HubSpot</button><span id="copyHubspotStatus" style="margin-inline-start:12px;font-size:13px" aria-live="polite"></span></div>
 
 <div class="panel" id="quoteGenerationPanel" style="border:2px solid #5c7df2;background:linear-gradient(160deg,#fff,#f1f6ff)">
- <h2 class="section-title">10. הפקת הצעת מחיר לפי הטמפלייט (בחירת מודולים דינמית)</h2>
+ <h2 class="section-title">9. הפקת הצעת מחיר לפי הטמפלייט (בחירת מודולים דינמית)</h2>
  <p style="line-height:1.7;color:#41536b">ההצעה שומרת על המבנה של טמפלייט Word: פתיח, פירוט החבילה בטבלת מודולים ויכולות, הטמעה, הסבות, סיכום עלויות ותנאים. מחירי המודולים הכלולים אינם מוצגים בנפרד אלא אם צירפת נספח; מודולים שסומנו כ״אופציונלי״ יוצגו בסעיף הרחבות נפרד עם עלותם.</p>
  <div class="warn" style="margin-bottom:14px"><strong>תמחור הבסיס:</strong> מחושב לפי מחשבון Arbox Clinics 0.4, כפי שאושר כמקור התמחור. ניתן לערוך מחירים ולתת הנחות במסגרת ההצעה בלבד, לאחר בדיקה ואישור פנימי מתאים. מסמך ה־Word משמש לעיצוב ולניסוח. <strong>יש לבדוק את המחירים וההנחות לפני שליחה</strong> — יש לאשר ניסוח, תנאי ההצעה ופרטי העסקה לפני משלוח ללקוח.</div>
  <div class="p-option"><label><input id="quoteShowBreakdown" type="checkbox"> לצרף נספח תמחור מפורט (ללקוחות שמבקשים פירוט לפי רכיב)</label><div class="hint">כבוי כברירת מחדל. כברירת מחדל מופיעים רק פירוט היכולות בטבלת החבילה וסיכומי עלויות.</div></div>
