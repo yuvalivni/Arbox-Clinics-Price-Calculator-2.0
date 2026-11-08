@@ -546,7 +546,13 @@
 .billing-mode-option span{display:block;padding:10px 23px;border-radius:8px;font-size:14px;font-weight:700;color:#47556e;transition:.15s}
 .billing-mode-option:has(input:checked) span{color:#fff;background:#00173f;box-shadow:0 2px 5px #00173f24}
 .billing-mode-option:has(input:focus-visible) span{outline:2px solid #5c7df2;outline-offset:2px}
-.billing-discount-fields{display:contents}
+/* v4.8: keep the three monthly-discount controls together in one full-width row. */
+#discountPanel .billing-discount-fields{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;grid-column:1/-1;align-items:start}
+#discountPanel .billing-discount-fields .field{min-width:0}
+#discountPanel #annualDiscountField{grid-column:1/-1}
+#discountPanel .discount-visibility-field{grid-column:1/-1}
+@media(max-width:780px){#discountPanel .billing-discount-fields{grid-template-columns:1fr}}
+
 #annualSummaryCard{background:#f1f5ff;border-color:#c8d5fb;margin-top:3px}
 #annualSummaryCard .val{font-size:29px}#annualSummaryCard .small{margin-top:6px;line-height:1.5}
 .p-annual-gross td,.p-annex-annual-gross td{border-top:1px solid #d7e1ed}
@@ -610,7 +616,7 @@
    <div class="field"><label for="setupDiscountAmount" id="setupDiscountLabel">הנחה על הקמה, הטמעה והדרכה (₪)</label><input id="setupDiscountAmount" type="number" min="0" step="1" value="0"><div class="hint">הנחה על הסכום הכולל של ההטמעה וההדרכה</div></div>
    <div class="field"><label for="migrationDiscountType">סוג ההנחה על הסבת נתונים</label><select id="migrationDiscountType"><option value="amount">בסכום (₪)</option><option value="percent">באחוזים (%)</option></select></div>
    <div class="field"><label for="migrationDiscountAmount" id="migrationDiscountLabel">הנחה על הסבת נתונים (₪)</label><input id="migrationDiscountAmount" type="number" min="0" step="1" value="0"><div class="hint">זמין רק אם נבחרה הסבת נתונים</div></div>
-   <div class="field"><label for="showDiscountsOnQuote">הצגת ההנחות בהצעה ללקוח</label><select id="showDiscountsOnQuote"><option value="yes">כן — להציג את ההנחות וסכומן</option><option value="no">לא — להציג רק את המחירים לתשלום</option></select><div class="hint">כאשר בוחרים לא, ההצעה תציג את המחירים לאחר הנחה בלי לציין שהתקבלה הנחה. מחיר חודשי לתקופה מוגבלת יוצג עם מועדי השינוי.</div></div>
+   <div class="field discount-visibility-field"><label for="showDiscountsOnQuote">הצגת ההנחות בהצעה ללקוח</label><select id="showDiscountsOnQuote"><option value="yes">כן — להציג את ההנחות וסכומן</option><option value="no">לא — להציג רק את המחירים לתשלום</option></select><div class="hint">כאשר בוחרים לא, ההצעה תציג את המחירים לאחר הנחה בלי לציין שהתקבלה הנחה. מחיר חודשי לתקופה מוגבלת יוצג עם מועדי השינוי.</div></div>
  </div>
  <div id="discountPreview" class="p-discount-preview" aria-live="polite">לא הוגדרו הנחות.</div>
 </div>
