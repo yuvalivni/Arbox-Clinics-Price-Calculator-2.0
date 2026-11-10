@@ -2102,7 +2102,7 @@ $('printProposal').addEventListener('click',()=>{
 @media print{#exportProposalDocx{display:none!important}}
 </style>
 <script id="arboxDocxExportV50">
-/* Arbox Clinics v5.0: self-contained, editable Word (.docx) export. No remote scripts or server. */
+/* Arbox Clinics v5.1: Hebrew RTL DOCX / Google Docs interoperability. Self-contained. */
 (() => {
   'use strict';
   const byId = id => document.getElementById(id);
@@ -2175,7 +2175,7 @@ $('printProposal').addEventListener('click',()=>{
       if(opt.italic)pr.push('<w:i/>','<w:iCs/>');
       if(opt.underline)pr.push('<w:u w:val="single"/>');
       if(opt.color)pr.push(`<w:color w:val="${opt.color}"/>`);
-      if(/[\u0590-\u05ff]/.test(str))pr.push('<w:rtl w:val="1"/>');
+      if(/[\u0590-\u05ff]/.test(str))pr.push('<w:rtl w:val="1"/>','<w:cs/>','<w:lang w:val="he-IL" w:bidi="he-IL"/>');
       return `<w:r><w:rPr>${pr.join('')}</w:rPr><w:t xml:space="preserve">${xml(str)}</w:t></w:r>`;
     };
     const lineBreak=()=>'<w:r><w:br/></w:r>';
@@ -2207,11 +2207,12 @@ $('printProposal').addEventListener('click',()=>{
       const size=headings[style]||20;
       const after=style==='h1'?180:style==='h2'?130:style==='h3'?105:style==='cover'?260:style==='small'?60:70;
       const before=style==='h2'?190:style==='h3'?130:0;
-      const jc=opts.center?'center':opts.left?'left':'right';
+      // RTL paragraph start = the right edge in Word and Google Docs.
+      const jc=opts.center?'center':opts.left?'left':'start';
       const col=opts.color||((style==='h1'||style==='h2'||style==='cover')?'18396e':'');
       const bold=style.startsWith('h')||style==='cover';
-      const pr=`<w:pPr><w:bidi w:val="1"/><w:jc w:val="${jc}"/><w:spacing w:before="${before}" w:after="${after}" w:line="300" w:lineRule="auto"/>${style==='cover'?'<w:keepNext/>':''}${opts.breakBefore?'<w:pageBreakBefore/>':''}${opts.indent?'<w:ind w:right="330"/>':''}</w:pPr>`;
-      return `<w:p>${pr}${opts.raw?content:(bold?`<w:r><w:rPr><w:b/><w:bCs/><w:sz w:val="${size}"/><w:szCs w:val="${size}"/>${col?`<w:color w:val="${col}"/>`:''}</w:rPr><w:t xml:space="preserve">${xml(content)}</w:t></w:r>`:run(content,{size,color:col||undefined}))}</w:p>`;
+      const pr=`<w:pPr><w:pStyle w:val="Normal"/><w:bidi w:val="1"/><w:jc w:val="${jc}"/><w:spacing w:before="${before}" w:after="${after}" w:line="300" w:lineRule="auto"/>${style==='cover'?'<w:keepNext/>':''}${opts.breakBefore?'<w:pageBreakBefore/>':''}${opts.indent?'<w:ind w:right="330"/>':''}</w:pPr>`;
+      return `<w:p>${pr}${opts.raw?content:(bold?`<w:r><w:rPr><w:b/><w:bCs/><w:sz w:val="${size}"/><w:szCs w:val="${size}"/>${col?`<w:color w:val="${col}"/>`:''}<w:rtl w:val="1"/><w:cs/><w:lang w:val="he-IL" w:bidi="he-IL"/></w:rPr><w:t xml:space="preserve">${xml(content)}</w:t></w:r>`:run(content,{size,color:col||undefined}))}</w:p>`;
     }
     function paraElement(el,style='body',opts={}) {
       const size=style==='h1'?39:style==='h2'?29:style==='h3'?25:style==='small'?18:20;
@@ -2224,7 +2225,7 @@ $('printProposal').addEventListener('click',()=>{
       const proportions=(widths?.length===cols?widths:Array.from({length:cols},()=>1/cols));
       const sum=proportions.reduce((a,b)=>a+b,0)||1;
       const sized=proportions.map(a=>Math.round(available*a/sum));
-      let s=`<w:tbl><w:tblPr><w:tblW w:w="9300" w:type="dxa"/><w:bidiVisual/><w:jc w:val="center"/><w:tblLayout w:type="fixed"/><w:tblCellMar><w:top w:w="100" w:type="dxa"/><w:bottom w:w="100" w:type="dxa"/><w:left w:w="125" w:type="dxa"/><w:right w:w="125" w:type="dxa"/></w:tblCellMar><w:tblBorders><w:top w:val="single" w:sz="5" w:color="D9E2EF"/><w:bottom w:val="single" w:sz="5" w:color="D9E2EF"/><w:insideH w:val="single" w:sz="4" w:color="E6EBF3"/></w:tblBorders></w:tblPr><w:tblGrid>${sized.map(w=>`<w:gridCol w:w="${w}"/>`).join('')}</w:tblGrid>`;
+      let s=`<w:tbl><w:tblPr><w:tblW w:w="9300" w:type="dxa"/><w:bidiVisual w:val="1"/><w:jc w:val="center"/><w:tblLayout w:type="fixed"/><w:tblCellMar><w:top w:w="100" w:type="dxa"/><w:bottom w:w="100" w:type="dxa"/><w:left w:w="125" w:type="dxa"/><w:right w:w="125" w:type="dxa"/></w:tblCellMar><w:tblBorders><w:top w:val="single" w:sz="5" w:color="D9E2EF"/><w:bottom w:val="single" w:sz="5" w:color="D9E2EF"/><w:insideH w:val="single" w:sz="4" w:color="E6EBF3"/></w:tblBorders></w:tblPr><w:tblGrid>${sized.map(w=>`<w:gridCol w:w="${w}"/>`).join('')}</w:tblGrid>`;
       rows.forEach((cells,i)=>{
         s+=`<w:tr>${opts.header&&i===0?'<w:trPr><w:tblHeader w:val="true"/></w:trPr>':''}`;
         cells.forEach((cell,j)=>{
@@ -2263,7 +2264,7 @@ $('printProposal').addEventListener('click',()=>{
       if(art)parts.push(pPara(image(art,160,131),'body',{center:true,raw:true}));
       const site=el.querySelector('.p-cover-site');
       if(site)parts.push(paraElement(site,'small',{center:true}));
-      parts.push('<w:p><w:pPr><w:spacing w:after="0"/></w:pPr><w:r><w:br w:type="page"/></w:r></w:p>');
+      parts.push('<w:p><w:pPr><w:pStyle w:val="Normal"/><w:bidi w:val="1"/><w:jc w:val="start"/><w:spacing w:after="0"/></w:pPr><w:r><w:br w:type="page"/></w:r></w:p>');
       return parts.join('');
     }
     function walk(node) {
@@ -2292,7 +2293,7 @@ $('printProposal').addEventListener('click',()=>{
     const body=[...sheet.children].map(walk).join('');
     const documentXml=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing" xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture"><w:body>${body}<w:sectPr><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="1070" w:right="1130" w:bottom="1070" w:left="1130" w:header="720" w:footer="720" w:gutter="0"/><w:bidi w:val="1"/><w:footerReference w:type="default" r:id="rId3"/></w:sectPr></w:body></w:document>`;
     const rels=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/settings" Target="settings.xml"/><Relationship Id="rId3" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/footer" Target="footer1.xml"/>${mediaRels.join('')}</Relationships>`;
-    const styleXml=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:docDefaults><w:rPrDefault><w:rPr><w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial"/><w:sz w:val="20"/><w:szCs w:val="20"/><w:lang w:val="he-IL" w:bidi="he-IL"/></w:rPr></w:rPrDefault><w:pPrDefault><w:pPr><w:bidi/><w:jc w:val="right"/></w:pPr></w:pPrDefault></w:docDefaults><w:style w:type="paragraph" w:default="1" w:styleId="Normal"><w:name w:val="Normal"/><w:pPr><w:bidi/><w:jc w:val="right"/><w:spacing w:after="85" w:line="300" w:lineRule="auto"/></w:pPr></w:style></w:styles>`;
+    const styleXml=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:docDefaults><w:rPrDefault><w:rPr><w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial"/><w:sz w:val="20"/><w:szCs w:val="20"/><w:lang w:val="he-IL" w:bidi="he-IL"/></w:rPr></w:rPrDefault><w:pPrDefault><w:pPr><w:bidi w:val="1"/><w:jc w:val="start"/></w:pPr></w:pPrDefault></w:docDefaults><w:style w:type="paragraph" w:default="1" w:styleId="Normal"><w:name w:val="Normal"/><w:pPr><w:bidi w:val="1"/><w:jc w:val="start"/><w:spacing w:after="85" w:line="300" w:lineRule="auto"/></w:pPr></w:style></w:styles>`;
     const footer=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:ftr xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">${pPara(run('Arbox.co.il',{size:17,color:'8A97A9'}),'small',{center:true,raw:true})}</w:ftr>`;
     const types=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/>${media.some(a=>a.name.endsWith('.png'))?'<Default Extension="png" ContentType="image/png"/>':''}${media.some(a=>a.name.endsWith('.jpg'))?'<Default Extension="jpg" ContentType="image/jpeg"/>':''}<Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/><Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/><Override PartName="/word/settings.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.settings+xml"/><Override PartName="/word/footer1.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.footer+xml"/><Override PartName="/docProps/core.xml" ContentType="application/vnd.openxmlformats-package.core-properties+xml"/><Override PartName="/docProps/app.xml" ContentType="application/vnd.openxmlformats-officedocument.extended-properties+xml"/></Types>`;
     const files=[
