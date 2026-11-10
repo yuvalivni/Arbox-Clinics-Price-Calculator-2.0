@@ -1,4 +1,4 @@
-<!doctype html><html lang="he" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Arbox Clinics | מחשבון הצעת מחיר</title>
+<!doctype html><html lang="he" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Arbox Clinics | מחשבון הצעת מחיר v5.4</title>
 <style>
 :root{--navy:#00173f;--blue:#5c7df2;--sky:#f1f5ff;--mint:#bdf5ca;--aqua:#9ed9d7;--green:#5ebf9b;--border:#dce5f1;--muted:#66758a;--bg:#f5f8fc;--warn:#fff8e8}*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:Arial,"Noto Sans Hebrew",sans-serif;color:#152238}.wrap{max-width:1450px;margin:auto;padding:26px}.hero{position:relative;overflow:hidden;background:linear-gradient(115deg,#00173f 0%,#102d65 58%,#5c7df2 100%);color:#fff;border-radius:22px;padding:27px 30px;margin-bottom:20px;box-shadow:0 14px 35px #00173f24;min-height:112px}.hero:after{content:"";position:absolute;inset:auto -60px -100px auto;width:290px;height:210px;background:radial-gradient(circle at 30% 35%,#bdf5ca 0,#9ed9d7 34%,#5c7df2 72%,transparent 73%);opacity:.22;border-radius:50%}.hero-copy{padding-left:230px;position:relative;z-index:2}.brand-logo{position:absolute;left:28px;top:50%;transform:translateY(-50%);width:185px;max-height:78px;object-fit:contain;background:#fff;border-radius:14px;padding:9px 12px;box-shadow:0 6px 18px #00173f24;z-index:3}.hero h1{margin:0 0 7px;font-size:29px}.hero p{margin:0;opacity:.82}.layout{display:grid;grid-template-columns:minmax(0,1fr) 370px;gap:20px}.panel,.summary{background:#fff;border:1px solid var(--border);border-radius:18px;box-shadow:0 5px 18px #183b6420}.panel{padding:22px;margin-bottom:18px}.summary{padding:20px;position:sticky;top:18px;height:max-content}.section-title{font-size:20px;font-weight:800;color:var(--navy);margin:0 0 16px;border-bottom:1px solid var(--border);padding-bottom:12px}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.field label{display:block;font-size:13px;font-weight:700;margin-bottom:6px;color:#41536b}.field input,.field select{width:100%;border:1px solid #ccd8e6;border-radius:10px;padding:11px;background:#fff;font-size:14px}.mods{display:flex;flex-direction:column;gap:10px}.mod-row{display:grid;grid-template-columns:1fr;gap:10px}.mod-row.pair{grid-template-columns:repeat(2,1fr)}.mod{border:1px solid var(--border);border-radius:13px;padding:13px;background:#fbfdff}.mod-head{display:flex;align-items:center;gap:8px;font-weight:700}.mod input[type=checkbox]{width:17px;height:17px}.sub{margin-top:10px}.sub input,.sub select{width:100%;padding:8px;border:1px solid #d3deea;border-radius:8px}.hint{font-size:12px;color:var(--muted);margin-top:5px}.price{font-size:12px;color:var(--blue);font-weight:700;margin-top:5px}.kpi{border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:10px}.kpi .label{font-size:12px;color:var(--muted)}.kpi .val{font-size:25px;font-weight:800;color:var(--navy);margin-top:3px}.kpi.primary{background:linear-gradient(135deg,#f1f5ff,#edf8ff);border-color:#c8d5fb}.kpi.one{background:linear-gradient(135deg,#f1fff5,#effcfb);border-color:#c8eed5}.line{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px dashed #e4ebf3;font-size:14px}.line:last-child{border:0}.tag{display:inline-block;background:#eef2ff;color:#3f5fc5;border-radius:99px;padding:4px 8px;font-size:11px}.warn{background:var(--warn);border:1px solid #f0d68d;padding:11px;border-radius:10px;font-size:13px;margin-top:10px}.hidden{display:none!important}.output{background:#f8fbff;border:1px solid #dce8f7;border-radius:12px;padding:13px;white-space:pre-line;line-height:1.65;font-size:13px}.btn{border:0;border-radius:10px;padding:10px 13px;font-weight:700;cursor:pointer}.btn.copy{background:linear-gradient(90deg,var(--navy),#294b9b);color:#fff;width:100%;margin-top:10px}.small{font-size:12px;color:var(--muted)}@media(max-width:1050px){.layout{grid-template-columns:1fr}.summary{position:static}.grid{grid-template-columns:1fr 1fr}}@media(max-width:650px){.wrap{padding:10px}.grid,.mod-row.pair{grid-template-columns:1fr}.hero{border-radius:14px;padding:22px 18px}.brand-logo{position:static;transform:none;width:145px;margin-bottom:14px}.hero-copy{padding-left:0}}
 
@@ -1047,8 +1047,17 @@ q('copyHubspot').addEventListener('click',async()=>{
 document.querySelectorAll('input,select').forEach(e=>e.addEventListener('input',calc));calc();
 </script>
 <div id="proposalModal" class="p-modal" hidden aria-hidden="true">
-  <div class="p-toolbar"><strong>תצוגה מקדימה — הצעת מחיר</strong><span>תמחור לפי מחשבון 0.4 · הנוסח דורש אישור לפני משלוח</span><button type="button" id="toggleProposalEdit" aria-pressed="false">עריכת תוכן ההצעה</button><button type="button" id="closeProposal">סגירה</button><button type="button" id="printProposal">שמירת PDF</button></div>
-  <p id="proposalEditNote" class="p-editor-notice" hidden>מצב עריכה פעיל: לחץ על פסקה, כותרת או תיאור יכולת כדי לשנות את הנוסח. את שעות ההטמעה וההדרכה, מספר פגישות ההדרכה והעלויות עורכים בשדות המיועדים בתוך ההצעה. שינוי שעות אינו משנה אוטומטית את המחיר; ניתן לערוך שעות ועלויות בנפרד. השינויים נשמרים בתצוגה הנוכחית וייכללו ב־PDF.</p>
+  <div class="p-toolbar"><strong>תצוגה מקדימה — הצעת מחיר 5.4</strong><span>עריכה מלאה של פריטים, סכומים וטבלאות · יש לאמת סיכומים לאחר עריכה ידנית</span><button type="button" id="toggleProposalEdit" aria-pressed="false">עריכת תוכן ההצעה</button><button type="button" id="closeProposal">סגירה</button><button type="button" id="printProposal">שמירת PDF</button></div>
+  <p id="proposalEditNote" class="p-editor-notice" hidden>מצב עריכה מלאה: לחץ על כל כותרת, פסקה, תא טבלה, שורת עלות או סכום כדי לערוך. ניתן להוסיף שורות, פסקאות וסעיפים, וגם להסיר פריטים. עריכת סכום ידנית במסמך אינה מעדכנת את נוסחאות המחשבון או את סכומי הסיכום האחרים — יש לתאם ביניהם ידנית לפני שליחה. עריכות נשמרות בארכיון וייכללו ב־PDF וב־Word.</p>
+  <div id="v54EditorTools" class="v54-editor-tools" hidden role="toolbar" aria-label="כלי עריכת הצעת מחיר">
+    <span id="v54SelectionHint">בחר פריט במסמך כדי לערוך או להוסיף לידו</span>
+    <button type="button" data-v54-action="row">+ שורת טבלה</button>
+    <button type="button" data-v54-action="paragraph">+ פסקה</button>
+    <button type="button" data-v54-action="heading">+ סעיף</button>
+    <button type="button" data-v54-action="bullet">+ סעיף ברשימה</button>
+    <button type="button" data-v54-action="table">+ טבלה</button>
+    <button type="button" data-v54-action="remove" class="v54-remove">הסר פריט נבחר</button>
+  </div>
   <div id="proposalSheet" class="p-sheet" dir="rtl" lang="he"></div>
 </div>
 <style>
@@ -1232,8 +1241,8 @@ function setLabelDiscountTexts(){
  if(!proposalEditsModel)return;
  const m=proposalEditsModel,sh=$('proposalSheet');
  const description=(type,value)=>type==='percent'?`${value}%`:`${quoteMoney(value)}`;
- sh.querySelectorAll('[data-discount-setup-label]').forEach(e=>e.textContent=`(${description(m.setupType,m.setupValue)})`);
- sh.querySelectorAll('[data-discount-migration-label]').forEach(e=>e.textContent=`(${description(m.migrationType,m.migrationValue)})`);
+ sh.querySelectorAll('[data-discount-setup-label]').forEach(e=>{if(!window.arboxProposalV54?.isManual(e))e.textContent=`(${description(m.setupType,m.setupValue)})`;});
+ sh.querySelectorAll('[data-discount-migration-label]').forEach(e=>{if(!window.arboxProposalV54?.isManual(e))e.textContent=`(${description(m.migrationType,m.migrationValue)})`;});
 }
 function updateProposalAmounts(){
  if(!proposalEditsModel)return;
@@ -1300,13 +1309,13 @@ function updateProposalAmounts(){
   migrationDisplay:show?m.migration:migrationNet,oneGross,oneNet,oneSavings:setupSavings+migrationSavings};
  sheet.querySelectorAll('[data-quote-money]').forEach(el=>{
   const key=el.dataset.quoteMoney;
-  if(key in amounts)el.textContent=quoteMoney(amounts[key]);
+  if(key in amounts && !window.arboxProposalV54?.isManual(el))el.textContent=quoteMoney(amounts[key]);
  });
   // The customer-facing scope must always reflect the agreed number of hours,
   // including the optional detailed price annex; these fields are not price formulas.
-  sheet.querySelectorAll('[data-quote-impl-hours]').forEach(el=>el.textContent=formatHours(implHours));
-  sheet.querySelectorAll('[data-quote-training-hours]').forEach(el=>el.textContent=formatHours(trainHours));
-  sheet.querySelectorAll('[data-quote-training-meetings]').forEach(el=>el.textContent=String(meetings));
+  sheet.querySelectorAll('[data-quote-impl-hours]').forEach(el=>{if(!window.arboxProposalV54?.isManual(el))el.textContent=formatHours(implHours);});
+  sheet.querySelectorAll('[data-quote-training-hours]').forEach(el=>{if(!window.arboxProposalV54?.isManual(el))el.textContent=formatHours(trainHours);});
+  sheet.querySelectorAll('[data-quote-training-meetings]').forEach(el=>{if(!window.arboxProposalV54?.isManual(el))el.textContent=String(meetings);});
   sheet.querySelectorAll('[data-quote-impl-hours-unit]').forEach(el=>el.textContent=implHours===1?'שעת עבודה':'שעות עבודה');
   sheet.querySelectorAll('[data-quote-train-hours-unit]').forEach(el=>el.textContent=trainHours===1?'שעת הדרכה':'שעות הדרכה');
   sheet.querySelectorAll('[data-quote-meetings-unit]').forEach(el=>el.textContent=meetings===1?'פגישה':'פגישות');
@@ -1326,7 +1335,7 @@ function updateProposalAmounts(){
  setVis('.p-setup-discount,.p-annex-setup-discount',show&&setupSavings>0);
  setVis('.p-migration-discount,.p-annex-migration-discount',show&&migrationSavings>0);
  setLabelDiscountTexts();
- const setLabel=(sel,value)=>sheet.querySelectorAll(sel).forEach(el=>el.textContent=value);
+ const setLabel=(sel,value)=>sheet.querySelectorAll(sel).forEach(el=>{if(!window.arboxProposalV54?.isManual(el))el.textContent=value;});
  setLabel('[data-annual-discount-label]',`${annualPct}%`);
  setLabel('[data-annual-pay-title]',show&&annualSavings>0?'סה״כ לתשלום שנתי מראש לאחר הנחה':'סה״כ לתשלום שנתי מראש');
  setLabel('[data-quote-monthly-title]',annualMode?'שווי חודשי לחישוב':hasMonthly?(show?'סך עלות חודשית לפני הנחה':`סך עלות חודשית החל מהחודש ה־${m.months+1}`):'סך עלות חודשית');
@@ -1356,12 +1365,14 @@ function setProposalTextEditing(enabled){
   if(el.closest(forbidden.join(','))||el.querySelector('input,[data-quote-money]'))return;
   if(el.closest('.p-approval .p-sign'))return;
   el.setAttribute('contenteditable',enabled?'true':'false');
+  el.dataset.v53Editable='1';
   if(enabled)el.setAttribute('spellcheck','true');
  });
  sheet.classList.toggle('p-edit-active',enabled);
  $('toggleProposalEdit').setAttribute('aria-pressed',String(enabled));
  $('toggleProposalEdit').textContent=enabled?'סיים עריכת תוכן':'עריכת תוכן ההצעה';
  $('proposalEditNote').hidden=!enabled;
+ window.arboxProposalV54?.setEditing(enabled);
 }
 function initProposalEdits(model){
  proposalEditsModel=model;
@@ -1889,7 +1900,7 @@ $('printProposal').addEventListener('click',()=>{
     if (!sheet.children.length || !renderedSignature) return null;
     const inputs={};
     sheet.querySelectorAll('input[id]').forEach(el=>{ inputs[el.id] = el.type==='checkbox' ? !!el.checked : el.value; });
-    return { formSignature:renderedSignature, inputs, textEdits: {...textEdits} };
+    return { formSignature:renderedSignature, inputs, textEdits: {...textEdits}, v54:window.arboxProposalV54?.capture()||null };
   }
   function restoreQuote(snapshot) {
     // Preserve manually edited text/hours in quotes saved before annual billing existed.
@@ -1926,8 +1937,8 @@ $('printProposal').addEventListener('click',()=>{
     const updateId = Object.keys(snapshot.inputs||{}).find(id=> id==='proposalImplAmount' || id==='proposalTrainingAmount' || id==='proposalUserUnit' || id.startsWith('proposalTierRate_'));
     $(updateId || 'proposalImplAmount')?.dispatchEvent(new Event('input',{bubbles:true}));
     textEdits={};
-    const nodes=editableNodes();
-    for (const [key,markup] of Object.entries(snapshot.textEdits||{})) {
+    const nodes=snapshot.v54?editableNodes():[...sheet.querySelectorAll('[data-v53-editable="1"]')];
+    for (const [key,markup] of Object.entries(snapshot.v54?{}:(snapshot.textEdits||{}))) {
       const index=Number(key);
       const el=nodes[index];
       if (!Number.isSafeInteger(index)||!el||typeof markup!=='string') continue;
@@ -1935,6 +1946,7 @@ $('printProposal').addEventListener('click',()=>{
       el.innerHTML=markup;
       textEdits[index]=markup;
     }
+    if(snapshot.v54)window.arboxProposalV54?.restore(snapshot.v54);
   }
 
   function activeRecord() { return records.find(r=>r.id===currentId) || null; }
@@ -2149,7 +2161,7 @@ $('printProposal').addEventListener('click',()=>{
   sheet.addEventListener('input',event=>{
     if (restoring) return;
     const el=event.target.closest?.('[contenteditable="true"]');
-    if (el && sheet.contains(el)) {
+    if (el && sheet.contains(el) && !window.arboxProposalV54) {
       const index=editableNodes().indexOf(el);
       if(index>=0) textEdits[index]=el.innerHTML;
     }
@@ -2466,5 +2478,279 @@ $('printProposal').addEventListener('click',()=>{
   });
 })();
 
+</script>
+
+<style id="arboxQuoteV54CSS">
+/* 5.4: Full in-proposal editor. Tools never appear in PDF or DOCX. */
+.v54-editor-tools{position:sticky;top:64px;z-index:4;max-width:1080px;margin:0 auto 14px;display:flex;flex-wrap:wrap;align-items:center;gap:7px;padding:11px 13px;background:#f7faff;border:1px solid #bed1ed;border-radius:11px;box-shadow:0 3px 14px #1f4c8920;direction:rtl}
+.v54-editor-tools[hidden]{display:none!important}
+.v54-editor-tools span{font-size:12px;color:#345379;flex:1;min-width:150px;line-height:1.5}
+.v54-editor-tools button{border:1px solid #9fb8dd;border-radius:8px;background:#fff;color:#193f77;padding:8px 11px;cursor:pointer;font:700 12px Arial,sans-serif}
+.v54-editor-tools button:hover{background:#eaf2ff}
+.v54-editor-tools .v54-remove{border-color:#e2b8b8;color:#993434}
+.p-sheet.p-edit-active [data-v54-editable="1"]{cursor:text;outline:1px dashed #9ab5df;outline-offset:1px;min-height:1em}
+.p-sheet.p-edit-active [data-v54-editable="1"]:focus{outline:2px solid #5174cc!important;outline-offset:1px;background:#f7fbff!important}
+.p-sheet.p-edit-active [data-v54-selected="1"]{outline:2px dashed #3d64b9!important;outline-offset:3px}
+.p-sheet [data-v54-deleted="1"]{display:none!important}
+.p-sheet [data-v54-added]{break-inside:avoid-page;page-break-inside:avoid}
+.p-sheet.p-edit-active [data-v54-added]:not(tr){background:#f9fcff}
+.p-sheet .v54-new-table{width:100%;border-collapse:collapse;margin:8px 0 16px}
+.p-sheet .v54-new-table td,.p-sheet .v54-new-table th{border:1px solid #d9e3ee;padding:7px 10px}
+@media(max-width:740px){.v54-editor-tools{top:10px;padding:9px}.v54-editor-tools span{flex-basis:100%}}
+@media print{#v54EditorTools,.v54-editor-tools{display:none!important}.p-sheet [data-v54-editable]{outline:none!important;background:transparent!important}}
+</style>
+<script id="arboxQuoteEditorV54">
+/* Arbox Clinics v5.4 — full item editor, structured inserts and durable local snapshots.
+   Edits affect the CLIENT PROPOSAL only; formulas in the calculator are unchanged.
+   No client information is ever sent to a server by this feature. */
+(() => {
+ 'use strict';
+ const sheet=document.getElementById('proposalSheet');
+ const panel=document.getElementById('v54EditorTools');
+ const hint=document.getElementById('v54SelectionHint');
+ if(!sheet||!panel)return;
+ let active=null, editing=false, baseRoot=null, nextId=0, nextSequence=0;
+ const BLOCKS='h1,h2,h3,h4,h5,h6,p,li,td,th,.p-sign > div,.p-one-time-cost > span,.p-one-time-cost > b,.p-doc-head > span,.p-cover-site,.p-footer > span,.p-brief-item,.p-package-label,.p-meta';
+ const ANCHORS='section,div,table,tr,td,th,h1,h2,h3,h4,h5,h6,p,li,ul,ol,span,b,strong,small';
+ const escapeHtml=s=>String(s).replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+ const byAnchor=id=>[...sheet.querySelectorAll('[data-v54-anchor]')].find(el=>el.dataset.v54Anchor===id);
+ function isEditorNode(el){
+   if(el.closest('.p-edit-only,.p-inline-price-edit'))return false;
+   if(el.matches('p,h1,h2,h3,h4,h5,h6') && el.closest('td,th,li'))return false;
+   if(el.matches('li') && el.closest('td,th'))return false;
+   if(el.matches('p') && el.closest('.p-one-time-cost'))return false;
+   if(el.querySelector('input,textarea,select,button,img'))return false;
+   return true;
+ }
+ function candidates(){return [...sheet.querySelectorAll(BLOCKS)].filter(isEditorNode);}
+ function prepare(){
+   if(!sheet.firstElementChild)return;
+   if(baseRoot!==sheet.firstElementChild){
+     baseRoot=sheet.firstElementChild;nextId=0;nextSequence=0;active=null;
+     sheet.querySelectorAll(ANCHORS).forEach((el,i)=>{el.dataset.v54Anchor='b'+i;});
+   }
+   for(const el of candidates()){
+     el.dataset.v54Editable='1';
+     el.setAttribute('contenteditable',editing?'true':'false');
+     if(editing)el.setAttribute('spellcheck','true');
+   }
+ }
+ function setEditing(enabled){
+   editing=!!enabled;
+   prepare();
+   panel.hidden=!editing;
+   if(!editing){
+     sheet.querySelectorAll('[contenteditable]').forEach(el=>el.setAttribute('contenteditable','false'));
+     sheet.querySelectorAll('[data-v54-selected]').forEach(el=>el.removeAttribute('data-v54-selected'));
+     active=null;
+   }
+   selectionHint();
+ }
+ function selectionHint(){
+   if(!hint)return;
+   if(!active||!sheet.contains(active)){hint.textContent='לחץ על תא, פסקה או כותרת כדי לבחור פריט';return;}
+   const tag=active.tagName.toLowerCase();
+   hint.textContent=(active.closest('table')?'נבחר פריט בטבלה':tag==='li'?'נבחר פריט ברשימה':'נבחר פריט במסמך')+' · אפשר לערוך ישירות או להוסיף פריט';
+ }
+ function select(el){
+   sheet.querySelectorAll('[data-v54-selected]').forEach(x=>x.removeAttribute('data-v54-selected'));
+   active=el;
+   if(active&&editing)active.setAttribute('data-v54-selected','1');
+   selectionHint();
+ }
+ function isManual(el){return !!el?.closest?.('[data-v54-changed="1"]');}
+ function sanitizePastedHtml(root){
+   // Local snapshots can be imported from JSON backups. Keep rich styling, reject active content.
+   root.querySelectorAll('script,style,iframe,object,embed,svg,form,button,input,textarea,select,link,meta').forEach(n=>n.remove());
+   for(const el of root.querySelectorAll('*')){
+     for(const att of [...el.attributes]){
+       if(/^on/i.test(att.name)||['src','srcdoc','href','xlink:href'].includes(att.name)||(att.name==='style'&&/url\s*\(/i.test(att.value)))el.removeAttribute(att.name);
+     }
+   }
+   return root;
+ }
+ function htmlClean(html){
+   const tmp=document.createElement('template');tmp.innerHTML=String(html||'');
+   sanitizePastedHtml(tmp.content);
+   return tmp.innerHTML;
+ }
+ function safeAddedNode(markup){
+   const temp=document.createElement('template');temp.innerHTML=String(markup||'');
+   sanitizePastedHtml(temp.content);
+   const node=temp.content.firstElementChild;
+   if(!node||!['TR','P','H2','H3','LI','TABLE'].includes(node.tagName))return null;
+   return node;
+ }
+ function capture(){
+   if(!sheet.children.length)return null;
+   const changed={};
+   sheet.querySelectorAll('[data-v54-changed="1"][data-v54-anchor]').forEach(el=>{
+     if(el.closest('[data-v54-added]'))return;
+     changed[el.dataset.v54Anchor]=el.innerHTML;
+   });
+   const added=[...sheet.querySelectorAll('[data-v54-added]')].filter(el=>!el.parentElement?.closest('[data-v54-added]'))
+     .sort((a,b)=>(Number(a.dataset.v54Seq)||0)-(Number(b.dataset.v54Seq)||0))
+     .map(el=>({after:el.dataset.v54After||'',place:el.dataset.v54Place||'after',html:el.outerHTML}));
+   const deleted=[...sheet.querySelectorAll('[data-v54-deleted="1"][data-v54-anchor]')]
+     .filter(el=>!el.closest('[data-v54-added]')).map(el=>el.dataset.v54Anchor);
+   return {version:54,changed,added,deleted};
+ }
+ function restore(snapshot){
+   if(!snapshot||snapshot.version!==54)return;
+   prepare();
+   for(const obj of (Array.isArray(snapshot.added)?snapshot.added:[])){
+     const anchor=byAnchor(obj.after);
+     const node=safeAddedNode(obj.html);
+     if(!anchor||!node||!anchor.parentNode)continue;
+     const sameRow=anchor.tagName==='TR'&&node.tagName==='TR';
+     if(node.tagName==='TR'&&!sameRow)continue;
+     if(node.tagName==='LI'&&anchor.tagName!=='LI')continue;
+     const place=obj.place==='before'?'beforebegin':'afterend';
+     anchor.insertAdjacentElement(place,node);
+     nextSequence=Math.max(nextSequence,Number(node.dataset.v54Seq)||0);
+     const id=String(node.dataset.v54Anchor||'');
+     if(/^a\d+$/.test(id))nextId=Math.max(nextId,Number(id.slice(1))||0);
+   }
+   for(const [key,markup] of Object.entries(snapshot.changed||{})){
+     const node=byAnchor(key);
+     if(!node||!isEditorNode(node))continue;
+     node.innerHTML=htmlClean(markup);
+     node.dataset.v54Changed='1';
+   }
+   for(const key of (Array.isArray(snapshot.deleted)?snapshot.deleted:[])){
+     const el=byAnchor(key);
+     if(el)el.dataset.v54Deleted='1';
+   }
+   prepare();
+   setEditing(false);
+ }
+ function editingTarget(el){return el?.closest?.('[data-v54-editable="1"]');}
+ sheet.addEventListener('focusin',e=>{
+   if(!editing)return;
+   const node=editingTarget(e.target);
+   if(node&&sheet.contains(node))select(node);
+ });
+ sheet.addEventListener('click',e=>{
+   if(!editing)return;
+   const node=editingTarget(e.target);
+   if(node&&sheet.contains(node))select(node);
+ });
+ sheet.addEventListener('input',e=>{
+   if(!editing)return;
+   const node=editingTarget(e.target);
+   if(!node||!sheet.contains(node))return;
+   node.dataset.v54Changed='1';
+ });
+ sheet.addEventListener('paste',e=>{
+   if(!editing||!editingTarget(e.target))return;
+   e.preventDefault();
+   const text=e.clipboardData?.getData('text/plain')||'';
+   const selection=window.getSelection();
+   if(!selection?.rangeCount)return;
+   const range=selection.getRangeAt(0);range.deleteContents();
+   const lines=text.replace(/\r\n?/g,'\n').split('\n');
+   const fragment=document.createDocumentFragment();
+   lines.forEach((line,i)=>{if(i)fragment.append(document.createElement('br'));fragment.append(document.createTextNode(line));});
+   const last=fragment.lastChild;range.insertNode(fragment);
+   if(last){range.setStartAfter(last);range.collapse(true);selection.removeAllRanges();selection.addRange(range);}
+   const node=editingTarget(e.target);node.dataset.v54Changed='1';
+   node.dispatchEvent(new Event('input',{bubbles:true}));
+ });
+ function markAdded(el,anchor,place){
+   el.dataset.v54Added='1';
+   el.dataset.v54Anchor='a'+(++nextId);
+   el.dataset.v54After=anchor.dataset.v54Anchor;
+   el.dataset.v54Place=place;
+   el.dataset.v54Seq=String(++nextSequence);
+   anchor.insertAdjacentElement(place==='before'?'beforebegin':'afterend',el);
+   prepare();
+   const target=el.matches('[data-v54-editable]')?el:el.querySelector('[data-v54-editable]');
+   if(target){select(target);target.focus();}
+   document.dispatchEvent(new Event('v54:changed'));
+ }
+ function tableForInsert(){return active?.closest('table')||sheet.querySelector('.p-price-detail table')||sheet.querySelector('.p-cost-table')||sheet.querySelector('.p-modules-table')||sheet.querySelector('table');}
+ function addRow(){
+   const table=tableForInsert();
+   if(!table){alert('אין במסמך טבלה זמינה. ניתן להוסיף טבלה חדשה דרך כפתור + טבלה.');return;}
+   const colCount=Math.max(2,table.querySelector('thead tr')?.children.length||table.querySelector('tbody tr')?.children.length||2);
+   const row=document.createElement('tr');
+   for(let i=0;i<colCount;i++){
+     const td=row.insertCell();
+     td.textContent=i===0?'רכיב נוסף':i===colCount-1?'₪0':'פירוט נוסף';
+   }
+   const selectionRow=active?.closest('tbody tr');
+   let anchor=null,place='afterend';
+   if(selectionRow&&selectionRow.closest('table')===table){
+     anchor=selectionRow;
+     if(/total|discount/i.test(selectionRow.className)){place='beforebegin';}
+   }else{
+     anchor=table.querySelector('tbody tr.p-total,tbody tr.p-cost-total,tbody tr[class*="annual-total"],tbody tr:last-child')||table.querySelector('tbody tr:last-child');
+     if(anchor){place=/total/i.test(anchor.className)?'beforebegin':'afterend';}
+   }
+   if(!anchor){table.createTBody().appendChild(row);prepare();select(row.cells[0]);return;}
+   markAdded(row,anchor,place);
+ }
+ function blockAnchor(){
+   if(!active)return sheet.querySelector('.p-terms-shell')||sheet.querySelector('.p-footer')||sheet.lastElementChild;
+   const cell=active.closest('td,th');
+   if(cell)return cell.closest('table');
+   const li=active.closest('li');
+   if(li)return li.closest('ul,ol');
+   return active.closest('h1,h2,h3,h4,h5,h6,p,table,section,div')||active;
+ }
+ function addBlock(type){
+   const anchor=blockAnchor();if(!anchor)return;
+   let node;
+   if(type==='table'){
+     node=document.createElement('table');node.className='v54-new-table';
+     node.innerHTML='<thead><tr><th>רכיב</th><th>פירוט / עלות</th></tr></thead><tbody><tr><td>פריט חדש</td><td>₪0</td></tr></tbody>';
+   }else if(type==='heading'){node=document.createElement('h2');node.textContent='סעיף חדש';}
+   else {node=document.createElement('p');node.textContent='הוסף כאן את התוכן שלך';}
+   markAdded(node,anchor,'afterend');
+ }
+ function addBullet(){
+   const li=active?.closest('li')||sheet.querySelector('.p-terms-shell li')||sheet.querySelector('li');
+   if(!li){addBlock('paragraph');return;}
+   const node=document.createElement('li');node.textContent='סעיף נוסף';
+   markAdded(node,li,'afterend');
+ }
+ function removeSelected(){
+   if(!active||!sheet.contains(active)){alert('יש לבחור תחילה פריט בהצעה.');return;}
+   let target=active.closest('tr,li,h1,h2,h3,h4,h5,h6,p,.p-sign > div')||active;
+   if(target.closest('td,th')&&!target.matches('tr'))target=target.closest('tr');
+   if(target.matches('td,th'))target=target.closest('tr');
+   if(!target||target===sheet||target.classList.contains('p-cover'))return;
+   if(!confirm('להסיר את הפריט הנבחר מהצעת המחיר? הפעולה תשפיע על ההצעה בלבד.'))return;
+   if(target.hasAttribute('data-v54-added')){
+     // Reattach later inserts that depended on this item, to keep snapshots recoverable.
+     const before=target.previousElementSibling,after=target.nextElementSibling;
+     const replacement=before?.dataset.v54Anchor?before:after?.dataset.v54Anchor?after:null;
+     sheet.querySelectorAll('[data-v54-after]').forEach(child=>{
+       if(child===target||child.dataset.v54After!==target.dataset.v54Anchor||!replacement)return;
+       child.dataset.v54After=replacement.dataset.v54Anchor;
+       child.dataset.v54Place=replacement===before?'after':'before';
+     });
+     target.remove();
+   }else target.dataset.v54Deleted='1';
+   select(null);
+   document.dispatchEvent(new Event('v54:changed'));
+ }
+ panel.addEventListener('click',event=>{
+   const button=event.target.closest('button[data-v54-action]');
+   if(!button||!editing)return;
+   const cmd=button.dataset.v54Action;
+   if(cmd==='row')addRow();
+   else if(cmd==='paragraph')addBlock('paragraph');
+   else if(cmd==='heading')addBlock('heading');
+   else if(cmd==='bullet')addBullet();
+   else if(cmd==='table')addBlock('table');
+   else if(cmd==='remove')removeSelected();
+ });
+ document.addEventListener('v54:changed',()=>{
+   // Existing history listens to inputs within the sheet. Trigger a lightweight save signal.
+   sheet.dispatchEvent(new Event('change',{bubbles:true}));
+ });
+ window.arboxProposalV54={setEditing,capture,restore,isManual};
+})();
 </script>
 </body></html>
