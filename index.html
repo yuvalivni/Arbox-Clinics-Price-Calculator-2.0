@@ -1087,7 +1087,7 @@ q('copyHubspot').addEventListener('click',async()=>{
 document.querySelectorAll('input,select').forEach(e=>e.addEventListener('input',calc));calc();
 </script>
 <div id="proposalModal" class="p-modal" hidden aria-hidden="true">
-  <div class="p-toolbar"><strong>תצוגה מקדימה — הצעת מחיר 5.8</strong><span>עריכה מלאה של פריטים, סכומים וטבלאות · יש לאמת סיכומים לאחר עריכה ידנית</span><button type="button" id="toggleProposalEdit" aria-pressed="false">עריכת תוכן ההצעה</button><button type="button" id="closeProposal">סגירה</button><button type="button" id="printProposal">שמירת PDF</button><button type="button" id="saveToHubspot" class="arbox-hubspot-save-btn">שמירה ב-HubSpot</button></div>
+  <div class="p-toolbar"><strong>תצוגה מקדימה — הצעת מחיר 5.9</strong><span>עריכה מלאה של פריטים, סכומים וטבלאות · יש לאמת סיכומים לאחר עריכה ידנית</span><button type="button" id="toggleProposalEdit" aria-pressed="false">עריכת תוכן ההצעה</button><button type="button" id="closeProposal">סגירה</button><button type="button" id="printProposal">שמירת PDF</button><button type="button" id="saveToHubspot" class="arbox-hubspot-save-btn">שמירה ב-HubSpot</button></div>
   <p id="proposalEditNote" class="p-editor-notice" hidden>מצב עריכה מלאה: לחץ על כל כותרת, פסקה, תא טבלה, שורת עלות או סכום כדי לערוך. ניתן להוסיף שורות, פסקאות וסעיפים, וגם להסיר פריטים. עריכת סכום ידנית במסמך אינה מעדכנת את נוסחאות המחשבון או את סכומי הסיכום האחרים — יש לתאם ביניהם ידנית לפני שליחה. עריכות נשמרות בארכיון וייכללו ב־PDF וב־Word. ניתן לבחור פסקה או תא בטבלה ולשנות את גודל הטקסט, או לסמן החלה על שורת טבלה שלמה.</p>
   <div id="v54EditorTools" class="v54-editor-tools" hidden role="toolbar" aria-label="כלי עריכת הצעת מחיר">
     <span id="v54SelectionHint">בחר פריט במסמך כדי לערוך או להוסיף לידו</span>
@@ -2913,7 +2913,7 @@ $('printProposal').addEventListener('click',()=>{
 })();
 </script>
 
-<style id="arboxHubspotUploadV58Styles">
+<style id="arboxHubspotUploadV59Styles">
 .arbox-hubspot-save-btn,#arboxShareUpload{background:#eaf5ff!important;color:#104c83!important;border:1px solid #8cbde4!important;font-weight:800!important}
 .arbox-hubspot-save-btn:disabled,#arboxShareUpload:disabled{opacity:.65;cursor:progress}
 body.arbox-hubspot-export .p-sheet.p-edit-active [contenteditable="true"]{outline:none!important;background:transparent!important}
@@ -2921,12 +2921,47 @@ body.arbox-hubspot-export .p-sheet .p-edit-only,
 body.arbox-hubspot-export .p-sheet .p-inline-price-edit,
 body.arbox-hubspot-export .p-sheet .p-tier-edit-control{display:none!important}
 </style>
+
+<style id="arboxHubspotExportSourceV59Styles">
+/* Isolated continuous-layout document for client-side HTML-to-PDF rasterization.
+   Do not render directly from the fixed/scrollable proposal modal. */
+.p-sheet.arbox-hubspot-pdf-source {
+  width: 730px !important; max-width: 730px !important;
+  min-width: 730px !important; min-height: 0 !important;
+  margin: 0 !important; padding: 0 !important;
+  background: white !important; border: 0 !important;
+  box-shadow: none !important; border-radius: 0 !important;
+  position: relative !important; overflow: visible !important;
+  transform: none !important; opacity: 1 !important; visibility: visible !important;
+}
+.p-sheet.arbox-hubspot-pdf-source,
+.p-sheet.arbox-hubspot-pdf-source * {
+  break-before: auto !important; break-after: auto !important;
+  page-break-before: auto !important; page-break-after: auto !important;
+  break-inside: auto !important; page-break-inside: auto !important;
+}
+.p-sheet.arbox-hubspot-pdf-source .p-cover {
+  min-height: 1050px !important; height: 1050px !important;
+  box-sizing: border-box !important; padding: 28px 0 24px !important;
+  display: flex !important; overflow: hidden !important;
+}
+.p-sheet.arbox-hubspot-pdf-source .p-cover-main {min-height: 0 !important;}
+.p-sheet.arbox-hubspot-pdf-source .p-cover-site {bottom: 10px !important;}
+.p-sheet.arbox-hubspot-pdf-source .p-table-caption,
+.p-sheet.arbox-hubspot-pdf-source .p-price-detail {margin-top: 16px !important;}
+.p-sheet.arbox-hubspot-pdf-source .p-edit-only,
+.p-sheet.arbox-hubspot-pdf-source .p-inline-price-edit,
+.p-sheet.arbox-hubspot-pdf-source .p-tier-edit-control,
+.p-sheet.arbox-hubspot-pdf-source .p-editor-notice,
+.p-sheet.arbox-hubspot-pdf-source .p-override-summary {display: none !important;}
+.p-sheet.arbox-hubspot-pdf-source [contenteditable] {outline: none !important;}
+</style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-<script id="arboxHubspotPdfUploadV58">
+<script id="arboxHubspotPdfUploadV59">
 (() => {
   'use strict';
   const API = 'https://blww9zbtpc.execute-api.eu-west-1.amazonaws.com/quote';
-  const val = (id) => (document.getElementById(id)?.value || document.getElementById(id)?.textContent || '').trim();
+  const val = id => (document.getElementById(id)?.value || document.getElementById(id)?.textContent || '').trim();
   const mainButton = document.getElementById('saveToHubspot');
   const otherButton = document.getElementById('arboxShareUpload');
   if (!mainButton) return;
@@ -2936,6 +2971,113 @@ body.arbox-hubspot-export .p-sheet .p-tier-edit-control{display:none!important}
     if (node) {node.textContent = text; node.className = 'share-status ' + kind;}
   };
   const showMessage = (text, kind = '') => {status(text, kind); alert(text);};
+  const nextFrame = () => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+
+  function preparePdfSource(sheet) {
+    // Moving the *original* proposal into a PDF renderer causes incorrect scroll
+    // offsets and page breaks. Create a detached-to-source, document-flow clone.
+    const container = document.createElement('div');
+    container.id = 'arboxHubspotCaptureHostV59';
+    container.setAttribute('aria-hidden', 'true');
+    Object.assign(container.style, {
+      position: 'absolute', top: '0px', left: '0px', width: '730px',
+      margin: '0', padding: '0', background: 'white',
+      zIndex: '-1', pointerEvents: 'none', overflow: 'visible',
+      direction: 'rtl'
+    });
+    const pdfSheet = sheet.cloneNode(true);
+    pdfSheet.removeAttribute('id');
+    pdfSheet.classList.remove('p-edit-active');
+    pdfSheet.classList.add('arbox-hubspot-pdf-source');
+    pdfSheet.removeAttribute('contenteditable');
+    pdfSheet.querySelectorAll('[contenteditable]').forEach(el => el.removeAttribute('contenteditable'));
+    // Mirror live form values BEFORE removing edit-only widgets, preserving DOM order.
+    const originals = sheet.querySelectorAll('textarea, input, select');
+    const replicas = pdfSheet.querySelectorAll('textarea, input, select');
+    originals.forEach((original, i) => {
+      const replica = replicas[i];
+      if (!replica) return;
+      if ('value' in replica) replica.value = original.value;
+      if (replica.tagName === 'TEXTAREA') replica.textContent = original.value;
+      if (original.type === 'checkbox' || original.type === 'radio') replica.checked = original.checked;
+    });
+    pdfSheet.querySelectorAll('.p-edit-only,.p-inline-price-edit,.p-tier-edit-control,.p-override-summary,.p-discount-edit-warning').forEach(el => el.remove());
+    container.appendChild(pdfSheet);
+    document.body.appendChild(container);
+    return {container, pdfSheet};
+  }
+
+  // Catch blank PDFs *before* they are accepted by HubSpot. The lightweight pixel
+  // sample scans the first A4 page of the canvas (the cover must be non-blank).
+  function assertNonBlankCanvas(canvas) {
+    if (!canvas || canvas.width < 300 || canvas.height < 450) {
+      throw new Error('לא הופק מסמך PDF בגודל תקין. הקובץ לא נשלח.');
+    }
+    const probe = document.createElement('canvas');
+    probe.width = 120;
+    const pageFraction = (297 - 16) / (210 - 16);
+    const pageHeight = Math.min(canvas.height, Math.round(canvas.width * pageFraction));
+    probe.height = Math.max(1, Math.round(pageHeight * probe.width / canvas.width));
+    const ctx = probe.getContext('2d', {willReadFrequently: true});
+    if (!ctx) throw new Error('לא ניתן לבדוק את תוכן הקובץ. הקובץ לא נשלח.');
+    ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, probe.width, probe.height);
+    ctx.drawImage(canvas, 0, 0, canvas.width, pageHeight, 0, 0, probe.width, probe.height);
+    const p = ctx.getImageData(0, 0, probe.width, probe.height).data;
+    let colored = 0;
+    for (let i=0; i<p.length; i+=4) {
+      if (p[i] < 225 || p[i+1] < 225 || p[i+2] < 225) colored++;
+    }
+    // 50 dark/non-white samples ~= 0.3% of a first page at thumbnail scale.
+    if (colored < 50) {
+      throw new Error('זוהה עמוד ראשון ריק ב-PDF. השמירה בוטלה כדי לא להעלות מסמך פגום.');
+    }
+  }
+
+  async function generateVerifiedPdf(sheet) {
+    let clone;
+    try {
+      clone = preparePdfSource(sheet);
+      await document.fonts?.ready;
+      await Promise.all([...clone.pdfSheet.querySelectorAll('img')].map(img =>
+        img.complete ? Promise.resolve() : new Promise(resolve => {
+          img.addEventListener('load', resolve, {once: true});
+          img.addEventListener('error', resolve, {once: true});
+        })
+      ));
+      await nextFrame();
+      const content = clone.pdfSheet.innerText.trim();
+      if (content.length < 120) throw new Error('תוכן הצעת המחיר ריק או חסר. הקובץ לא נשלח.');
+      const worker = window.html2pdf().set({
+        margin: 8,
+        filename: 'Arbox-Clinics-Quote.pdf',
+        image: {type: 'jpeg', quality: 0.96},
+        html2canvas: {
+          scale: 1.5, useCORS: true, backgroundColor: '#ffffff',
+          scrollX: 0, scrollY: 0, windowWidth: 1200,
+          // Rendering a separate body-level source avoids fixed-modal scrolling.
+          onclone: doc => {
+            const el = doc.querySelector('.arbox-hubspot-pdf-source');
+            if (el) {el.style.setProperty('margin', '0', 'important');}
+          }
+        },
+        jsPDF: {unit: 'mm', format: 'a4', orientation: 'portrait'},
+        // CSS pagination in v5.8 caused blank pages; let html2pdf slice the
+        // continuous export source without forced page breaks.
+        pagebreak: {mode: []}
+      }).from(clone.pdfSheet);
+      const canvas = await worker.toCanvas().get('canvas');
+      assertNonBlankCanvas(canvas);
+      const dataUrl = await worker.toPdf().outputPdf('datauristring');
+      if (typeof dataUrl !== 'string' || !dataUrl.startsWith('data:application/pdf;base64,')) {
+        throw new Error('הפקת PDF לא החזירה קובץ תקין.');
+      }
+      const byteEstimate = (dataUrl.length - dataUrl.indexOf(',') - 1) * 3 / 4;
+      if (byteEstimate < 15000) throw new Error('קובץ ה-PDF קטן באופן חריג, ולכן לא נשלח ל-HubSpot.');
+      return dataUrl;
+    } finally {
+      clone?.container.remove();
+    }
+  }
 
   async function saveQuoteToHubspot() {
     if (uploading) return;
@@ -2951,36 +3093,23 @@ body.arbox-hubspot-export .p-sheet .p-tier-edit-control{display:none!important}
     }
     uploading = true;
     const buttons = [mainButton, otherButton].filter(Boolean);
-    buttons.forEach(b => {b.dataset.previousLabel = b.textContent; b.disabled = true; b.textContent = 'שומר ב-HubSpot…';});
-    status('מפיק PDF ושומר אותו ב-HubSpot…');
-    document.body.classList.add('arbox-hubspot-export');
+    buttons.forEach(b => {b.dataset.previousLabel = b.textContent; b.disabled = true; b.textContent = 'מפיק PDF…';});
+    status('מפיק PDF תקין ובודק שהעמודים אינם ריקים…');
     try {
-      const dataUrl = await window.html2pdf().set({
-        margin: 8,
-        image: {type: 'jpeg', quality: 0.92},
-        html2canvas: {scale: 2, useCORS: true},
-        jsPDF: {unit: 'mm', format: 'a4'},
-        pagebreak: {mode: ['css', 'legacy']}
-      }).from(sheet).outputPdf('datauristring');
-      if (typeof dataUrl !== 'string' || !dataUrl.startsWith('data:application/pdf;')) {
-        throw new Error('הפקת PDF לא החזירה קובץ תקין');
-      }
-      // Remove export-only display overrides before network transfer.
-      document.body.classList.remove('arbox-hubspot-export');
+      const dataUrl = await generateVerifiedPdf(sheet);
+      status('הקובץ נבדק, שולח אותו ל-HubSpot…');
+      buttons.forEach(b => {b.textContent = 'שומר ב-HubSpot…';});
       const res = await fetch(API, {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({
-          email,
-          pdf_base64: dataUrl,
-          client_name: val('client'),
-          summary: val('hubspotSummary')
+          email, pdf_base64: dataUrl, client_name: val('client'), summary: val('hubspotSummary')
         })
       });
       let out = {};
-      try {out = await res.json();} catch (e) { /* Some server errors do not contain JSON. */ }
+      try {out = await res.json();} catch (e) { /* Handle errors without JSON bodies. */ }
       if (res.ok && !out.error) {
-        showMessage('ההצעה נשמרה בכרטיס הקונטקט ב-HubSpot ✓', 'success');
+        showMessage('הצעת המחיר נשמרה ב-HubSpot עם PDF מצורף ✓', 'success');
       } else if (out.error === 'contact_not_found') {
         showMessage('לא נמצא קונטקט ב-HubSpot עם האימייל ' + email, 'error');
       } else {
@@ -2989,12 +3118,13 @@ body.arbox-hubspot-export .p-sheet .p-tier-edit-control{display:none!important}
     } catch (e) {
       showMessage('השמירה נכשלה: ' + (e?.message || 'שגיאה לא ידועה'), 'error');
     } finally {
-      document.body.classList.remove('arbox-hubspot-export');
       uploading = false;
       buttons.forEach(b => {b.disabled = false; b.textContent = b.dataset.previousLabel || 'שמירה ב-HubSpot'; delete b.dataset.previousLabel;});
     }
   }
   mainButton.addEventListener('click', saveQuoteToHubspot);
+  // For regression tests and future support diagnostics; sends no data on its own.
+  window.arboxHubspotPdfV59 = Object.freeze({preparePdfSource, assertNonBlankCanvas});
 })();
 </script>
 </body></html>
