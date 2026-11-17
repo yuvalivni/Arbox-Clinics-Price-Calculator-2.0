@@ -1087,7 +1087,7 @@ q('copyHubspot').addEventListener('click',async()=>{
 document.querySelectorAll('input,select').forEach(e=>e.addEventListener('input',calc));calc();
 </script>
 <div id="proposalModal" class="p-modal" hidden aria-hidden="true">
-  <div class="p-toolbar"><strong>תצוגה מקדימה — הצעת מחיר 5.11</strong><span>עריכה מלאה של פריטים, סכומים וטבלאות · יש לאמת סיכומים לאחר עריכה ידנית</span><button type="button" id="toggleProposalEdit" aria-pressed="false">עריכת תוכן ההצעה</button><button type="button" id="closeProposal">סגירה</button><button type="button" id="printProposal">שמירת PDF</button><button type="button" id="saveToHubspot" class="arbox-hubspot-save-btn">שמירה ב-HubSpot</button></div>
+  <div class="p-toolbar"><strong>תצוגה מקדימה — הצעת מחיר 5.12</strong><span>עריכה מלאה של פריטים, סכומים וטבלאות · יש לאמת סיכומים לאחר עריכה ידנית</span><button type="button" id="toggleProposalEdit" aria-pressed="false">עריכת תוכן ההצעה</button><button type="button" id="closeProposal">סגירה</button><button type="button" id="printProposal">שמירת PDF</button><button type="button" id="saveToHubspot" class="arbox-hubspot-save-btn">שמירה ב-HubSpot</button></div>
   <p id="proposalEditNote" class="p-editor-notice" hidden>מצב עריכה מלאה: לחץ על כל כותרת, פסקה, תא טבלה, שורת עלות או סכום כדי לערוך. ניתן להוסיף שורות, פסקאות וסעיפים, וגם להסיר פריטים. עריכת סכום ידנית במסמך אינה מעדכנת את נוסחאות המחשבון או את סכומי הסיכום האחרים — יש לתאם ביניהם ידנית לפני שליחה. עריכות נשמרות בארכיון וייכללו ב־PDF וב־Word. ניתן לבחור פסקה או תא בטבלה ולשנות את גודל הטקסט, או לסמן החלה על שורת טבלה שלמה.</p>
   <div id="v54EditorTools" class="v54-editor-tools" hidden role="toolbar" aria-label="כלי עריכת הצעת מחיר">
     <span id="v54SelectionHint">בחר פריט במסמך כדי לערוך או להוסיף לידו</span>
@@ -2941,7 +2941,7 @@ body.arbox-hubspot-export .p-sheet .p-tier-edit-control{display:none!important}
   break-inside: auto !important; page-break-inside: auto !important;
 }
 .p-sheet.arbox-hubspot-pdf-source .p-cover {
-  min-height: 1050px !important; height: 1050px !important;
+  min-height: 990px !important; height: 990px !important;
   box-sizing: border-box !important; padding: 28px 0 24px !important;
   display: flex !important; overflow: hidden !important;
 }
@@ -2957,7 +2957,7 @@ body.arbox-hubspot-export .p-sheet .p-tier-edit-control{display:none!important}
 .p-sheet.arbox-hubspot-pdf-source [contenteditable] {outline: none !important;}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-<script id="arboxHubspotPdfUploadV511">
+<script id="arboxHubspotPdfUploadV512">
 (() => {
   'use strict';
   const API = 'https://blww9zbtpc.execute-api.eu-west-1.amazonaws.com/quote';
@@ -2965,6 +2965,13 @@ body.arbox-hubspot-export .p-sheet .p-tier-edit-control{display:none!important}
   const mainButton = document.getElementById('saveToHubspot');
   const otherButton = document.getElementById('arboxShareUpload');
   if (!mainButton) return;
+  // Download the *exact* PDF that would be posted to HubSpot for inspection.
+  const previewButton=document.createElement('button');
+  previewButton.type='button';
+  previewButton.id='arboxHubspotPdfDownloadCheck';
+  previewButton.className=mainButton.className;
+  previewButton.textContent='בדיקת PDF לפני שמירה';
+  mainButton.after(previewButton);
   let uploading = false;
   const status = (text, kind = '') => {
     const node = document.getElementById('arboxShareStatus');
@@ -3033,120 +3040,116 @@ body.arbox-hubspot-export .p-sheet .p-tier-edit-control{display:none!important}
     }
   }
 
-  // v5.11: The old html2pdf converter split one long screenshot at fixed A4 heights.
-  // That could cut Hebrew text, cost-table rows, and signatures in the middle.
-  // We now create an explicit JPEG image per A4 page, choosing cuts at DOM block
-  // boundaries.  Only the HubSpot attachment workflow uses this paginator.
-  function computePageCuts(pdfSheet, canvas) {
-    const source = pdfSheet.getBoundingClientRect();
-    if (!source.width || !source.height || !canvas.width || !canvas.height) {
-      throw new Error('לא ניתן למדוד את הצעת המחיר לצורך חלוקת העמודים.');
-    }
-    const scale = canvas.width / source.width;
-    const scaledHeight = source.height * scale;
-    if (Math.abs(scaledHeight - canvas.height) > Math.max(40, scaledHeight * 0.08)) {
-      throw new Error('פריסת ההצעה השתנתה בזמן ההמרה. נסו להפיק את המסמך שוב.');
-    }
-    // A4 = 210 × 297mm; 8mm margin on each side, same as the HubSpot PDF.
-    // A small reserve keeps floating-point rounding from creating a blank extra page.
-    const pxPerPage = Math.max(200, Math.floor(canvas.width * (281 / 194)) - 8);
-    const maxPageCss = pxPerPage / scale;
-    const stops = [];
-    const protectedRanges = [];
-    const yOf = (y) => Math.max(0, Math.min(canvas.height, Math.round((y - source.top) * scale)));
-    const addStop = (y, kind) => {
-      const point = yOf(y);
-      if (point > 0 && point < canvas.height) stops.push({y:point,kind});
+  // v5.12: Measure the exact DOM that html2pdf captures, not the live editor.
+  // html2pdf creates its own clone in toContainer() and may slightly reflow it.
+  // The previous version measured a different clone; its page cuts drifted.
+  function capturePdfLayout(renderRoot) {
+    if (!renderRoot) throw new Error('לא נמצאה תצוגה למדידת ה-PDF.');
+    const rootRect=renderRoot.getBoundingClientRect();
+    if (!rootRect.width || !rootRect.height) throw new Error('לא ניתן למדוד את ההצעה לפני שמירה.');
+    const topOf=r=>r.top-rootRect.top;
+    const bottomOf=r=>r.bottom-rootRect.top;
+    const stops=[], textBands=[], blockBands=[];
+    const addStop=(y,priority)=>{if(y>0&&y<rootRect.height)stops.push({y,priority});};
+    const addBand=(array,r,pad=0)=>{
+      const top=topOf(r)-pad, bottom=bottomOf(r)+pad;
+      if(bottom>top+1 && bottom>0 && top<rootRect.height)array.push([Math.max(0,top),Math.min(rootRect.height,bottom)]);
     };
-    const protect = (top,bottom) => {
-      const a=yOf(top), b=yOf(bottom);
-      if (b-a > 2 && b-a < pxPerPage * 0.92) protectedRanges.push([a,b]);
-    };
-    const atomicSelector = [
-      '.p-cover', 'p', 'li', 'tr', 'h1', 'h2', 'h3', 'h4',
-      '.p-capability', '.p-one-time-cost', '.p-core-card',
-      '.p-benefit-summary', '.p-sign', '.p-privacy',
-      '.p-tier-inline-card', '.p-doc-head', '.p-approval',
-      '.p-clearing-rate-table tr', '.p-cost-table tr'
-    ].join(',');
-    const nodes = [...pdfSheet.querySelectorAll(atomicSelector)];
-    for (const el of nodes) {
-      const r = el.getBoundingClientRect();
-      if (r.height < 3 || r.width < 3) continue;
-      protect(r.top, r.bottom);
-      addStop(r.bottom, 'end');
-      // Heading *starts* are excellent page boundaries; a heading should not
-      // be orphaned at the bottom of the preceding page.
-      if (el.matches('h1,h2,h3,h4')) addStop(r.top, 'heading-start');
-      if (el.matches('.p-cover')) addStop(r.bottom, 'cover-end');
-    }
-    // Keep headings together with the next visible paragraph/table row.
-    for (const el of pdfSheet.querySelectorAll('h1,h2,h3,h4')) {
-      const r=el.getBoundingClientRect();
-      let n=el.nextElementSibling;
-      while (n && (!n.getBoundingClientRect().height || n.matches('.p-edit-only'))) n=n.nextElementSibling;
-      if (n) {
-        const following=n.getBoundingClientRect();
-        if (following.top-r.top < maxPageCss * 0.35 && following.bottom-r.top < maxPageCss * 0.55) {
-          protect(r.top, following.bottom);
-        }
+    // Measure *individual rendered lines*, including long user-edited paragraphs.
+    // We never cut through text pixels, even when a paragraph spans pages.
+    const walker=document.createTreeWalker(renderRoot,NodeFilter.SHOW_TEXT);
+    let n;
+    while((n=walker.nextNode())){
+      if(!n.textContent.trim())continue;
+      const parent=n.parentElement;
+      if(!parent || parent.closest('[hidden],.p-edit-only,.p-inline-price-edit,.p-tier-edit-control'))continue;
+      const style=getComputedStyle(parent);
+      if(style.display==='none'||style.visibility==='hidden')continue;
+      const range=document.createRange();range.selectNodeContents(n);
+      for(const rect of range.getClientRects()){
+        if(rect.width<1||rect.height<2)continue;
+        addBand(textBands,rect,1.8);
+        addStop(bottomOf(rect)+3,0);
       }
+      range.detach?.();
     }
-    for (const section of pdfSheet.querySelectorAll('.p-cover,.p-features-shell,.p-implementation-shell,.p-terms-shell,.p-optional-section,.p-price-detail,.p-approval,.p-clearing-terms')) {
-      const r=section.getBoundingClientRect();
-      if (r.height > 4) addStop(r.top, 'section-start');
+    // Keep table rows, images and discrete cards intact whenever they fit.
+    const atomic='tr,.p-cover,.p-capability,.p-one-time-cost,.p-core-card,.p-privacy,.p-benefit-summary,.p-doc-head,.p-sign > div,img,svg';
+    for(const el of renderRoot.querySelectorAll(atomic)){
+      if(getComputedStyle(el).display==='none')continue;
+      const r=el.getBoundingClientRect();
+      if(r.width<3||r.height<3)continue;
+      addBand(blockBands,r,0);
+      addStop(bottomOf(r),3);
+    }
+    const boundary='p,li,tr,h1,h2,h3,h4,.p-cover,.p-monthly-cost-shell,.p-terms-shell,.p-features-shell,.p-implementation-shell,.p-optional-section,.p-price-detail,.p-clearing-terms,.p-approval';
+    for(const el of renderRoot.querySelectorAll(boundary)){
+      const r=el.getBoundingClientRect();
+      if(r.width<3||r.height<3)continue;
+      addStop(bottomOf(r),el.matches('.p-cover')?10:el.matches('tr')?5:3);
+      if(el.matches('h1,h2,h3,h4,.p-price-detail,.p-optional-section,.p-clearing-terms'))addStop(topOf(r)-3,5);
     }
     stops.sort((a,b)=>a.y-b.y);
-    const safe = y => !protectedRanges.some(([a,b]) => y > a+1 && y < b-1);
-    const result=[0];
-    while (result[result.length-1] < canvas.height) {
-      const previous=result[result.length-1];
-      const remaining=canvas.height-previous;
-      if (remaining <= pxPerPage) {result.push(canvas.height);break;}
-      const target=previous+pxPerPage;
-      const minimum=previous+Math.floor(pxPerPage*0.62);
-      const choices=stops.filter(s=>s.y>=minimum && s.y<=target && s.y>previous+10 && safe(s.y));
-      // Prefer a near-page-end position; favor the start of a section/heading
-      // and the cover edge rather than leaving an orphan heading behind.
-      const points=choices.map(s=>({
-        ...s, score:(s.y-previous)/pxPerPage +
-          (s.kind==='heading-start' || s.kind==='section-start' ? 0.085 : 0) +
-          (s.kind==='cover-end' ? 0.4 : 0)
-      })).sort((a,b)=>b.score-a.score);
-      let cut=points.length?points[0].y:0;
-      if (!cut) {
-        // Extremely long user-edited paragraphs may exceed a page by themselves.
-        // In that case find a quiet pixel row near the end instead of cutting
-        // arbitrarily through visible glyphs.
-        cut=quietRow(canvas, Math.max(previous+50,target-95),target,previous+50);
-      } // A DOM-safe boundary must not be moved back into an adjacent text row.
-
-      if (cut<=previous+10 || cut>target) cut=target;
-      result.push(cut);
-      if (result.length>150) throw new Error('הצעת המחיר ארוכה מדי להפקת PDF.');
-    }
-    return result;
+    return {width:rootRect.width,height:rootRect.height,stops,textBands,blockBands};
   }
 
-  function quietRow(canvas, first, last, minY) {
-    const a=Math.max(Math.ceil(minY),Math.floor(first));
-    const b=Math.min(canvas.height-1,Math.floor(last));
-    if (b<a) return Math.floor(last);
-    // Scan native pixel rows at reduced horizontal resolution so that visible
-    // glyph strokes, not scaled-away anti-aliasing, guide the fallback cut.
-    const ctx=canvas.getContext('2d',{willReadFrequently:true});
-    if(!ctx) return Math.floor(last);
-    let best=b, score=Infinity;
-    for(let y=a;y<=b;y+=2){
-      const pixels=ctx.getImageData(0,y,canvas.width,1).data;
-      let ink=0;
-      for(let x=0;x<pixels.length;x+=16){
-        if(Math.min(pixels[x],pixels[x+1],pixels[x+2])<190) ink++;
+  function computePageCuts(layout,canvas){
+    if(!layout?.width || !layout?.height || !canvas?.width || !canvas?.height)
+      throw new Error('לא ניתן למדוד את הצעת המחיר לצורך חלוקת העמודים.');
+    const sx=canvas.width/layout.width, sy=canvas.height/layout.height;
+    // A mismatch signals that the canvas was reflowed after layout measurement.
+    if(Math.abs(sx-sy)/sx>0.017)
+      throw new Error('הפריסה השתנתה בזמן צילום ה-PDF. השמירה בוטלה כדי למנוע חיתוך מלל.');
+    const scale=(sx+sy)/2;
+    const pageHeight=Math.floor(canvas.width*(281/194))-12;
+    const mapBand=([a,b])=>[Math.floor(a*scale)-3,Math.ceil(b*scale)+3];
+    const text=layout.textBands.map(mapBand);
+    const solid=layout.blockBands.map(([a,b])=>[Math.ceil(a*scale),Math.floor(b*scale)]).filter(([a,b])=>b-a<pageHeight*0.98);
+    const stops=layout.stops.map(s=>({y:Math.round(s.y*scale),priority:s.priority}));
+    const crosses=(y,ranges)=>ranges.some(([a,b])=>y>a&&y<b);
+    const safe=(y)=>y>5 && y<canvas.height-4 && !crosses(y,text) && !crosses(y,solid);
+    // Capture ink-density in exactly the same canvas used for PDF creation.
+    // This guards against differences between bounding boxes and actual paint.
+    const context=canvas.getContext('2d',{willReadFrequently:true});
+    if(!context)throw new Error('לא ניתן לבדוק את שורות המסמך לפני החלוקה.');
+    function ink(y){
+      const yy=Math.max(0,Math.min(canvas.height-1,Math.floor(y)));
+      const p=context.getImageData(0,yy,canvas.width,1).data;
+      let count=0;
+      const start=Math.floor(canvas.width*0.035)*4,stop=Math.floor(canvas.width*0.965)*4;
+      for(let x=start;x<stop;x+=28){
+        if(p[x]<204||p[x+1]<204||p[x+2]<204)count++;
       }
-      const quality=ink*10+(b-y)*0.025;
-      if(quality<score){score=quality;best=y;}
+      return count;
     }
-    return best;
+    const cuts=[0];
+    for(let page=0;cuts[cuts.length-1]<canvas.height;page++){
+      if(page>160)throw new Error('הצעת המחיר ארוכה מדי להפקת PDF.');
+      const prev=cuts[cuts.length-1],target=prev+pageHeight;
+      if(target>=canvas.height){cuts.push(canvas.height);break;}
+      const min=prev+Math.floor(pageHeight*0.53);
+      const entries=stops.filter(s=>s.y>=min&&s.y<=target-8&&safe(s.y));
+      let best=null;
+      for(const s of entries){
+        const score=(target-s.y)*0.18 + ink(s.y)*8 - s.priority*24;
+        if(!best||score<best.score)best={y:s.y,score};
+      }
+      // Fallback: find a gap between actual glyphs, not an arbitrary pixel cut.
+      // Check the whole second half, not just the last 95px of an A4 page.
+      if(!best){
+        for(let y=target-10;y>=min;y-=2){
+          if(!safe(y))continue;
+          const density=ink(y);
+          const score=(target-y)*0.2+density*10;
+          if(!best||score<best.score)best={y,score};
+          if(density===0&&target-y<40)break;
+        }
+      }
+      if(!best || best.y<=prev+20)
+        throw new Error('לא נמצאה נקודת מעבר עמוד בטוחה. ה-PDF לא נשלח כדי למנוע חיתוך תוכן.');
+      cuts.push(best.y);
+    }
+    return cuts;
   }
 
   function canvasPage(source,start,end) {
@@ -3188,9 +3191,14 @@ body.arbox-hubspot-export .p-sheet .p-tier-edit-control{display:none!important}
         jsPDF: {unit:'mm',format:'a4',orientation:'portrait'},
         pagebreak: {mode: []}
       }).from(clone.pdfSheet);
+      // Measure html2pdf's own render clone *before* it snapshots it.
+      // This guarantees geometry is from the same layout used for the PDF canvas.
+      const actualContainer=await imageWorker.toContainer().get('container');
+      const actualRoot=actualContainer?.firstElementChild;
+      const layout=capturePdfLayout(actualRoot);
       const canvas=await imageWorker.toCanvas().get('canvas');
       assertNonBlankCanvas(canvas);
-      const cuts=computePageCuts(clone.pdfSheet,canvas);
+      const cuts=computePageCuts(layout,canvas);
       if(cuts.length<2) throw new Error('לא ניתן לחלק את הצעת המחיר לעמודים.');
       // Create a jsPDF document using the already-loaded html2pdf bundle.
       // The tiny blank source only initializes the first A4 page; all real
@@ -3235,6 +3243,35 @@ body.arbox-hubspot-export .p-sheet .p-tier-edit-control{display:none!important}
     }
   }
 
+  previewButton.addEventListener('click', async () => {
+    if(uploading)return;
+    const sheet=document.getElementById('proposalSheet');
+    if(!sheet?.children.length||document.getElementById('proposalModal')?.hidden)
+      return showMessage('יש להפיק קודם את תצוגת ההצעה.','error');
+    if(typeof window.html2pdf!=='function')
+      return showMessage('ספריית PDF לא נטענה. בדקו את חיבור האינטרנט.','error');
+    uploading=true;
+    previewButton.disabled=true;
+    const initialLabel=previewButton.textContent;
+    previewButton.textContent='מפיק קובץ לבדיקה…';
+    try{
+      const uri=await generateVerifiedPdf(sheet);
+      const encoded=uri.slice(uri.indexOf(',')+1);
+      const binary=atob(encoded);
+      const bytes=new Uint8Array(binary.length);
+      for(let i=0;i<binary.length;i++)bytes[i]=binary.charCodeAt(i);
+      const blob=new Blob([bytes],{type:'application/pdf'});
+      const url=URL.createObjectURL(blob);
+      const link=document.createElement('a');
+      link.href=url;
+      link.download='Arbox-Clinics-HubSpot-Proposal-v5.12.pdf';
+      document.body.appendChild(link);link.click();link.remove();
+      setTimeout(()=>URL.revokeObjectURL(url),20000);
+      status('ה-PDF שיועלה ל-HubSpot הורד לבדיקה. פתחו אותו ובדקו את כל העמודים.','success');
+    }catch(e){showMessage('יצירת קובץ הבדיקה נכשלה: '+(e?.message||'שגיאה לא ידועה'),'error');}
+    finally{uploading=false;previewButton.disabled=false;previewButton.textContent=initialLabel;}
+  });
+
   async function saveQuoteToHubspot() {
     if (uploading) return;
     const sheet = document.getElementById('proposalSheet');
@@ -3248,7 +3285,7 @@ body.arbox-hubspot-export .p-sheet .p-tier-edit-control{display:none!important}
       return showMessage('ספריית הפקת ה-PDF לא נטענה. בדקו את חיבור האינטרנט ונסו שוב.', 'error');
     }
     uploading = true;
-    const buttons = [mainButton, otherButton].filter(Boolean);
+    const buttons = [mainButton, otherButton, previewButton].filter(Boolean);
     buttons.forEach(b => {b.dataset.previousLabel = b.textContent; b.disabled = true; b.textContent = 'מפיק PDF…';});
     status('מפיק PDF תקין ובודק שהעמודים אינם ריקים…');
     try {
@@ -3280,7 +3317,7 @@ body.arbox-hubspot-export .p-sheet .p-tier-edit-control{display:none!important}
   }
   mainButton.addEventListener('click', saveQuoteToHubspot);
   // For regression tests and future support diagnostics; sends no data on its own.
-  window.arboxHubspotPdfV511 = Object.freeze({preparePdfSource, assertNonBlankCanvas, computePageCuts, canvasPage});
+  window.arboxHubspotPdfV512 = Object.freeze({preparePdfSource, capturePdfLayout, assertNonBlankCanvas, computePageCuts, canvasPage});
 })();
 </script>
 </body></html>
